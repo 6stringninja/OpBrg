@@ -6,23 +6,22 @@ class ApplicationClients {
     constructor(serverTokens) {
         this.serverTokens = serverTokens;
         this.clients = [];
-        this.clientCredentialIsValid = (name, serverpassword, clientpassword) => this.serverTokens.checkServerPassword(serverpassword) &&
+        this.createClient = (name, serverpassword, clientpassword) => this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)
+            ? this.validatedCreateApplicationClientResult(name, clientpassword)
+            : CreateApplicationClientResult_1.CreateApplicationClientResult.Error;
+        this.isValidClientCredentialIsValid = (name, serverpassword, clientpassword) => this.serverTokens.isValidServerPassword(serverpassword) &&
             !!clientpassword &&
             !!name;
         this.doesClientNameExist = (name) => this.clients.some(s => s.name === name);
         this.addClient = (name, clientpassword) => this.clients.push(new ApplicationClient_1.ApplicationClient(name, clientpassword));
+        this.validatedCreateApplicationClientResult = (name, clientpassword) => this.doesClientNameExist(name)
+            ? CreateApplicationClientResult_1.CreateApplicationClientResult.NameUnavailable
+            : this.addClientCreateApplicationClientResult(name, clientpassword);
+        this.addClientCreateApplicationClientResult = (name, clientpassword) => !!this.addClient(name, clientpassword)
+            ? CreateApplicationClientResult_1.CreateApplicationClientResult.Success
+            : CreateApplicationClientResult_1.CreateApplicationClientResult.Error;
     }
-    createClient(name, serverpassword, clientpassword) {
-        if (this.clientCredentialIsValid(name, serverpassword, clientpassword)) {
-            if (this.doesClientNameExist(name)) {
-                return CreateApplicationClientResult_1.CreateApplicationClientResult.NameUnavailable;
-            }
-            this.addClient(name, clientpassword);
-            return CreateApplicationClientResult_1.CreateApplicationClientResult.Success;
-        }
-        return CreateApplicationClientResult_1.CreateApplicationClientResult.Error;
-    }
-    authorizeClient(name, password) {
+    isAuthorizedClient(name, password) {
         return (name &&
             password &&
             this.clients.some(s => s.name === name && s.password === password));

@@ -23,14 +23,9 @@ class ApplicationTokenHelper {
         return token;
     }
     static createToken(name) {
-        let rturn;
-        if (typeof name === 'object') {
-            rturn = this.setTokenIssuedAndId(this.copyToken(name));
-        }
-        else {
-            rturn = new ApplicationToken_1.ApplicationToken(name, ApplicationTokenHelper.generateIdentifier(), this.generateIssuedTime());
-        }
-        return rturn;
+        return this.isObject(name)
+            ? this.setTokenIssuedAndId(this.copyToken(name))
+            : ApplicationToken_1.ApplicationToken.create(name, ApplicationTokenHelper.generateIdentifier(), this.generateIssuedTime());
     }
     static copyToken(t) {
         return t ? Object.assign({}, t) : undefined;
@@ -51,4 +46,5 @@ ApplicationTokenHelper.generateIdentifier = (sizeX2 = 3) => {
     }
     return id;
 };
+ApplicationTokenHelper.isObject = (what) => typeof what === 'object';
 exports.ApplicationTokenHelper = ApplicationTokenHelper;

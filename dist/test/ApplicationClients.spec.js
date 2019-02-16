@@ -46,19 +46,19 @@ describe('Application Tokens', function () {
         serverTokens.password = 'test';
         for (let index = 0; index < 5; index++) {
             serverTokens.applicationClients.createClient(`test${index}`, 'test', 'test');
-            expect(serverTokens.applicationClients.authorizeClient(`test${index}`, 'test')).toBe(true);
+            expect(serverTokens.applicationClients.isAuthorizedClient(`test${index}`, 'test')).toBe(true);
         }
     });
     it('should not authorize client', function () {
         const serverTokens = new ServerTokens_1.ServerTokens();
         serverTokens.password = 'test';
         serverTokens.applicationClients.createClient('test', 'test', 'test');
-        expect(serverTokens.applicationClients.authorizeClient('test', 'test2')).toBe(false);
+        expect(serverTokens.applicationClients.isAuthorizedClient('test', 'test2')).toBe(false);
     });
     it('should not authorize client', function () {
         const serverTokens = new ServerTokens_1.ServerTokens();
         serverTokens.password = 'test';
         serverTokens.applicationClients.createClient('test', 'test', 'test');
-        expect(serverTokens.applicationClients.authorizeClient('test1', 'test')).toBe(false);
+        expect(serverTokens.applicationClients.isAuthorizedClient('test1', 'test')).toBe(false);
     });
 });

@@ -22,12 +22,12 @@ describe('Application Tokens', function () {
     });
     it('should as token to collection', function () {
         const serverTokens = new ServerTokens_1.ServerTokens();
-        serverTokens.addOrUpdateToken(new ApplicationToken_1.ApplicationToken('test'));
+        serverTokens.addOrUpdateToken(ApplicationToken_1.ApplicationToken.create('test'));
         expect(serverTokens.tokens.length).toBe(1);
     });
     it('should as update token in collection', function () {
         const serverTokens = new ServerTokens_1.ServerTokens();
-        serverTokens.addOrUpdateToken(new ApplicationToken_1.ApplicationToken('test'));
+        serverTokens.addOrUpdateToken(ApplicationToken_1.ApplicationToken.create('test'));
         const id = serverTokens.tokens[0].id;
         const nt = ApplicationTokenHelper_1.ApplicationTokenHelper.createToken('test');
         serverTokens.addOrUpdateToken(nt);
@@ -132,9 +132,14 @@ describe('Application Tokens', function () {
         const serverTokens = new ServerTokens_1.ServerTokens();
         // tslint:disable-next-line:max-line-length
         const t = serverTokens.authenticateNewToken('test', serverTokens.password);
+        expect(!!t.id).toBeTruthy();
+        expect(!!t.issued).toBeTruthy();
         serverTokens.tokens[0].issued = t.issued = new Date().getTime() + 100;
-        const tc = ApplicationTokenHelper_1.ApplicationTokenHelper.copyToken(t);
-        const vl = serverTokens.validateToken(t);
+        expect(t.issued === serverTokens.tokens[0].issued).toBeTruthy();
+        const tc = t.clone();
+        expect(!!tc.id).toBeTruthy();
+        expect(!!tc.issued).toBeTruthy();
+        const vl = serverTokens.validateToken(tc);
         expect(vl.success).toBeTruthy();
         expect(tc.id === vl.token.id).toBe(false);
         expect(tc.issued === vl.token.issued).toBe(false);

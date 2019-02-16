@@ -49,7 +49,7 @@ export class ApplicationTokenHelper {
   static createToken(name: string | ApplicationToken): ApplicationToken {
     return this.isObject(name)
       ? this.setTokenIssuedAndId(this.copyToken(name as ApplicationToken))
-      : new ApplicationToken(
+      : ApplicationToken.create(
           name as string,
           ApplicationTokenHelper.generateIdentifier(),
           this.generateIssuedTime()
