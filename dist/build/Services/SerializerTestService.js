@@ -8,7 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsyringe_1 = require("tsyringe");
 const SerializeService_1 = require("./SerializeService");
-let SerializerTestService = class SerializerTestService {
+let ApplicationClientSerializerTestService = class ApplicationClientSerializerTestService {
+    dataExists() {
+        return true;
+    }
     serialize(itemToSerialize) {
         this.fakeitems = itemToSerialize;
         const result = new SerializeService_1.SerializerResult();
@@ -25,7 +28,31 @@ let SerializerTestService = class SerializerTestService {
         return result;
     }
 };
-SerializerTestService = __decorate([
+ApplicationClientSerializerTestService = __decorate([
     tsyringe_1.singleton()
-], SerializerTestService);
-exports.SerializerTestService = SerializerTestService;
+], ApplicationClientSerializerTestService);
+exports.ApplicationClientSerializerTestService = ApplicationClientSerializerTestService;
+let ApplicationTokensSerializerTestService = class ApplicationTokensSerializerTestService {
+    dataExists() {
+        return true;
+    }
+    serialize(itemToSerialize) {
+        this.fakeitems = itemToSerialize;
+        const result = new SerializeService_1.SerializerResult();
+        result.result = JSON.stringify(itemToSerialize);
+        result.success = true;
+        return result;
+    }
+    deserialize() {
+        if (!this.fakeitems)
+            this.fakeitems = [];
+        const result = new SerializeService_1.SerializerResult();
+        result.result = this.fakeitems;
+        result.success = true;
+        return result;
+    }
+};
+ApplicationTokensSerializerTestService = __decorate([
+    tsyringe_1.singleton()
+], ApplicationTokensSerializerTestService);
+exports.ApplicationTokensSerializerTestService = ApplicationTokensSerializerTestService;

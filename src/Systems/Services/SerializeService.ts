@@ -10,10 +10,12 @@ export class SerializerResult<T> {
 export interface ISerializerService<T> {
     serialize(itemToSerialize: T): SerializerResult<string>;
     deserialize(): SerializerResult<T>;
+    dataExists(): boolean;
 }
 
 
 export abstract class SerializerJsonFileService<T> implements ISerializerService<T> {
+ 
 
     constructor(public filename = '') {}
 
@@ -21,6 +23,7 @@ export abstract class SerializerJsonFileService<T> implements ISerializerService
 
         const result = new SerializerResult<string>();
         result.result = JSON.stringify(itemToSerialize);
+        console.log({ path: this.filePath() });
        try {
         fs.writeFileSync(this.filePath(), result.result, 'utf8');
         result.success = true;
@@ -39,12 +42,16 @@ export abstract class SerializerJsonFileService<T> implements ISerializerService
         const result = new SerializerResult<T>();
      
         try {
+           
             result.result = JSON.parse(fs.readFileSync(this.filePath(), 'utf8')) as T;
             result.success = true;
         } catch (error) {
             result.success = false;
         }
         return result;
+    }
+    dataExists(): boolean {
+      return   fs.existsSync(this.filePath());
     }
 }
 @singleton()

@@ -6,11 +6,19 @@ import { ApplicationToken } from '../Application/ApplicationToken';
 import { container, inject, autoInjectable } from 'tsyringe';
 import {
   ISerializerService,
-  ApplicationTokensSerializerJsonFileService
+  ApplicationTokensSerializerJsonFileService,
+  ApplicationClientsSerializerJsonFileService
 } from '../Services/SerializeService';
+
+import { UidGeneratorService } from '../Services/UidGeneratorService';
+container.registerSingleton(
+  'ISerializerService<ApplicationClient[]>',
+  ApplicationClientsSerializerJsonFileService
+);
 container.register('ISerializerService<ApplicationToken[]>', {
   useClass: ApplicationTokensSerializerJsonFileService
 });
+
 @autoInjectable()
 export class ServerTokens {
   tokens: ApplicationToken[] = [];
@@ -32,6 +40,7 @@ export class ServerTokens {
 
     return obj;
   }
+
   getToken(name: string): ApplicationToken | undefined {
     return this.tokens.find(f => f.name == name);
   }
@@ -85,7 +94,43 @@ export class ServerTokens {
     this.tokens = this.filterOutExpiredTokens();
     return countPriorToFilter !== this.tokens.length;
   }
+  loadTokens() {
+    return this.serializeTokensService.dataExists()
+      ? this.readTokens()
+      : this.writeTokens();
+  }
+  writeTokens() {
+    return this.serializeTokensService.serialize(this.tokens).success;
+  }
+  readTokens() {
+    const dataResult = this.serializeTokensService.deserialize();
 
+    if (dataResult.success && dataResult.result) {
+      this.tokens = dataResult.result;
+      return dataResult.success;
+    }
+    return false;
+  }
+  loadClients() {
+    return this.applicationClients.serializeService.dataExists()
+      ? this.readClients()
+      : this.writeClients();
+  }
+  writeClients() {
+    return this.applicationClients.serializeService.serialize(
+      this.applicationClients.clients
+    ).success;
+  }
+  readClients() {
+    const dataResult = this.applicationClients.serializeService.deserialize();
+
+    if (dataResult.success && dataResult.result) {
+      this.applicationClients.clients = dataResult.result;
+      return dataResult.success;
+    }
+    return false;
+  }
+ 
   private filterOutExpiredTokens = () =>
     this.tokens.filter(f => f.issued < new Date().getTime());
 

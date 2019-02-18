@@ -4,10 +4,12 @@ import { ApplicationToken } from '../Application/ApplicationToken';
 import { container } from 'tsyringe';
 import { ApplicationTokensSerializerJsonFileService } from '../Services/SerializeService';
 import { ApplicationTokensSerializerTestService } from '../Services/SerializerTestService';
-container.register('ISerializerService<ApplicationToken[]>', {
-  useClass: ApplicationTokensSerializerTestService
-});
+import fs from 'fs';
+
 describe('Application Tokens', function() {
+  container.register('ISerializerService<ApplicationToken[]>', {
+    useClass: ApplicationTokensSerializerTestService
+  });
   it('get token', function() {
     const serverTokens = ServerTokens.create();
     serverTokens.addOrUpdateToken(ApplicationTokenHelper.createToken('test'));
@@ -176,29 +178,27 @@ describe('Application Tokens', function() {
     expect(tc.issued === vl.token.issued).toBe(false);
     expect(tc.name === vl.token.name).toBe(true);
   });
-  it('should load tokens', function () {
+  it('should load tokens', function() {
     const serverTokens = ServerTokens.create();
     const deserializeResult = serverTokens.serializeTokensService.deserialize();
-    expect(deserializeResult.success ).toBeTruthy();
-     serverTokens.authenticateNewToken('test', serverTokens.password);
+    expect(deserializeResult.success).toBeTruthy();
+    serverTokens.authenticateNewToken('test', serverTokens.password);
     expect(serverTokens.tokens.length).toBe(1);
     serverTokens.authenticateNewToken('test', serverTokens.password);
     serverTokens.serializeTokensService.serialize(serverTokens.tokens);
-    console.log(serverTokens);
   });
   //
 
-it('should load file tokens', function () {
-  container.register('ISerializerService<ApplicationToken[]>', {
-    useClass: ApplicationTokensSerializerTestService
+  it('should load file tokens', function() {
+    container.register('ISerializerService<ApplicationToken[]>', {
+      useClass: ApplicationTokensSerializerTestService
+    });
+    const serverTokens = ServerTokens.create();
+    const deserializeResult = serverTokens.serializeTokensService.deserialize();
+    expect(deserializeResult.success).toBeTruthy();
+    serverTokens.authenticateNewToken('test', serverTokens.password);
+    expect(serverTokens.tokens.length).toBe(1);
+    serverTokens.authenticateNewToken('test', serverTokens.password);
+    serverTokens.serializeTokensService.serialize(serverTokens.tokens);
   });
-  const serverTokens = ServerTokens.create();
-  const deserializeResult = serverTokens.serializeTokensService.deserialize();
-  expect(deserializeResult.success).toBeTruthy();
- serverTokens.authenticateNewToken('test', serverTokens.password);
-  expect(serverTokens.tokens.length).toBe(1);
-  serverTokens.authenticateNewToken('test', serverTokens.password);
-  serverTokens.serializeTokensService.serialize(serverTokens.tokens);
-  console.log(serverTokens);
-});
 });

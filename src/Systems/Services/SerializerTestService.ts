@@ -5,6 +5,9 @@ import { ApplicationToken } from '../Application/ApplicationToken';
 @singleton()
 export class ApplicationClientSerializerTestService
   implements ISerializerService<ApplicationClient[]> {
+  dataExists(): boolean {
+    return true;
+  }
   fakeitems: ApplicationClient[] | undefined;
   serialize(itemToSerialize: ApplicationClient[]): SerializerResult<string> {
     this.fakeitems = itemToSerialize;
@@ -23,20 +26,23 @@ export class ApplicationClientSerializerTestService
 }
 @singleton()
 export class ApplicationTokensSerializerTestService
-    implements ISerializerService<ApplicationToken[]> {
-    fakeitems: ApplicationToken[] | undefined;
-    serialize(itemToSerialize: ApplicationToken[]): SerializerResult<string> {
-        this.fakeitems = itemToSerialize;
-        const result = new SerializerResult<string>();
-        result.result = JSON.stringify(itemToSerialize);
-        result.success = true;
-        return result;
-    }
-    deserialize(): SerializerResult<ApplicationToken[]> {
-        if (!this.fakeitems) this.fakeitems = [];
-        const result = new SerializerResult<ApplicationToken[]>();
-        result.result = this.fakeitems;
-        result.success = true;
-        return result;
-    }
+  implements ISerializerService<ApplicationToken[]> {
+  dataExists(): boolean {
+    return true;
+  }
+  fakeitems: ApplicationToken[] | undefined;
+  serialize(itemToSerialize: ApplicationToken[]): SerializerResult<string> {
+    this.fakeitems = itemToSerialize;
+    const result = new SerializerResult<string>();
+    result.result = JSON.stringify(itemToSerialize);
+    result.success = true;
+    return result;
+  }
+  deserialize(): SerializerResult<ApplicationToken[]> {
+    if (!this.fakeitems) this.fakeitems = [];
+    const result = new SerializerResult<ApplicationToken[]>();
+    result.result = this.fakeitems;
+    result.success = true;
+    return result;
+  }
 }

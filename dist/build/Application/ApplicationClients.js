@@ -17,6 +17,8 @@ var ApplicationClients_1;
 const ApplicationClientCreateResult_1 = require("./ApplicationClientCreateResult");
 const ApplicationClient_1 = require("./ApplicationClient");
 const tsyringe_1 = require("tsyringe");
+const SerializeService_1 = require("../Services/SerializeService");
+tsyringe_1.container.registerSingleton('ISerializerService<ApplicationClient[]>', SerializeService_1.ApplicationClientsSerializerJsonFileService);
 let ApplicationClients = ApplicationClients_1 = class ApplicationClients {
     constructor(serializeService) {
         this.serializeService = serializeService;
@@ -32,7 +34,8 @@ let ApplicationClients = ApplicationClients_1 = class ApplicationClients {
         this.createClient = (name, serverpassword, clientpassword) => this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)
             ? this.validatedApplicationClientCreateResult(name, clientpassword)
             : ApplicationClientCreateResult_1.ApplicationClientCreateResult.Error;
-        this.isValidClientCredentialIsValid = (name, serverpassword, clientpassword) => !!(this.serverTokens && this.serverTokens.isValidServerPassword(serverpassword) &&
+        this.isValidClientCredentialIsValid = (name, serverpassword, clientpassword) => !!(this.serverTokens &&
+            this.serverTokens.isValidServerPassword(serverpassword) &&
             !!clientpassword &&
             !!name);
         this.doesClientNameExist = (name) => this.clients.some(s => s.name === name);
@@ -57,7 +60,7 @@ let ApplicationClients = ApplicationClients_1 = class ApplicationClients {
 };
 ApplicationClients = ApplicationClients_1 = __decorate([
     tsyringe_1.autoInjectable(),
-    __param(0, tsyringe_1.inject('ISerializerService<T>')),
+    __param(0, tsyringe_1.inject('ISerializerService<ApplicationClient[]>')),
     __metadata("design:paramtypes", [Object])
 ], ApplicationClients);
 exports.ApplicationClients = ApplicationClients;

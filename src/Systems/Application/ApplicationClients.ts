@@ -2,24 +2,22 @@ import { ServerTokens } from '../Server/ServerTokens';
 import { ApplicationClientCreateResult } from './ApplicationClientCreateResult';
 import { ApplicationClient } from './ApplicationClient';
 import { container, autoInjectable, inject } from 'tsyringe';
-import { ISerializerService } from '../Services/SerializeService';
-
-
-
+import { ISerializerService, ApplicationClientsSerializerJsonFileService } from '../Services/SerializeService';
+container.registerSingleton(
+  'ISerializerService<ApplicationClient[]>',
+  ApplicationClientsSerializerJsonFileService
+);
 @autoInjectable()
 export class ApplicationClients {
   clients: ApplicationClient[] = [];
   serverTokens: ServerTokens | undefined;
   constructor(
-    @inject('ISerializerService<T>') public serializeService: ISerializerService<ApplicationClient[]>,
-
-  ) {
-
-  }
+    @inject('ISerializerService<ApplicationClient[]>')
+    public serializeService: ISerializerService<ApplicationClient[]>
+  ) {}
   static create(serverTokens: ServerTokens) {
     const appClients = container.resolve(ApplicationClients);
     appClients.serverTokens = serverTokens;
-
     return appClients;
   }
   load = (): boolean => {
@@ -28,9 +26,8 @@ export class ApplicationClients {
       this.clients = result.result;
     }
     return result.success;
-  }
+  };
   save = (): boolean => this.serializeService.serialize(this.clients).success;
-
 
   createClient = (
     name: string,
@@ -46,9 +43,12 @@ export class ApplicationClients {
     serverpassword: string,
     clientpassword: string
   ): boolean =>
-    !!(this.serverTokens && this.serverTokens.isValidServerPassword(serverpassword) &&
+    !!(
+      this.serverTokens &&
+      this.serverTokens.isValidServerPassword(serverpassword) &&
       !!clientpassword &&
-      !!name);
+      !!name
+    );
 
   private doesClientNameExist = (name: string): boolean =>
     this.clients.some(s => s.name === name);
