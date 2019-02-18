@@ -1,20 +1,9 @@
-import { ApplicationToken } from '../../Application/ApplicationToken';
+import { ServerState } from '../ServerState';
+import { MessageInputBase } from './Base/MessageInputBase';
+import { MessageResultBase } from './Base/MessageResultBase';
+import { MessageWrapperBase } from './Base/MessageWrapperBase';
 export enum MessageTypes {
   CreateClient = 'Create Client'
-}
-export abstract class MessageInputBase {
-  token: ApplicationToken | undefined;
-  nonce: string | undefined;
-  constructor(public typeOf: MessageTypes) {}
-}
-export abstract class MessageResultBase<T> {
-  token: ApplicationToken | undefined;
-  nonce: string | undefined;
-  result: T | undefined;
-  success = false;
-  timestamp = new Date().getTime();
-  constructor(public typeOf: MessageTypes) {}
-  error: string | undefined;
 }
 export class CreateClientMessageInput extends MessageInputBase {
   constructor(
@@ -26,8 +15,26 @@ export class CreateClientMessageInput extends MessageInputBase {
   }
 }
 export class CreateClientMessageResult extends MessageResultBase<string> {
-  constructor(success  = false) {
-      super(MessageTypes.CreateClient);
-      this.success = success;   
+  constructor(success = false) {
+    super(MessageTypes.CreateClient);
+    this.success = success;
   }
+}
+export class CreateClientMessageWrapper extends MessageWrapperBase<
+  string,
+  CreateClientMessageInput,
+  CreateClientMessageResult
+> {
+  constructor() {
+    super(
+      'createclient',
+      new CreateClientMessageInput(),
+      new CreateClientMessageResult()
+    );
+  }
+  process(
+    req: Express.Request,
+    res: Express.Response,
+    serverState: ServerState
+  ): void {}
 }
