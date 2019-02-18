@@ -1,9 +1,9 @@
 
-import { ApplicationTokenHelper } from './Application/ApplicationTokenHelper';
-import { ApplicationClients } from './Application/ApplicationClients';
+import { ApplicationTokenHelper } from '../Application/ApplicationTokenHelper';
+import { ApplicationClients } from '../Application/ApplicationClients';
 import { isUndefined } from 'util';
 import { ServerTokenValidateResult } from './ServerTokenValidateResult';
-import { ApplicationToken } from './Application/ApplicationToken';
+import { ApplicationToken } from '../Application/ApplicationToken';
 
 
 export class ServerTokens {
