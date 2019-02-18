@@ -1,6 +1,7 @@
 import { ServerTokens } from './ServerTokens';
-import { ApplicationToken } from './ApplicationToken';
-import { ApplicationTokenHelper } from './ApplicationTokenHelper';
+import { ApplicationTokenHelper } from './Application/ApplicationTokenHelper';
+import { ApplicationToken } from './Application/ApplicationToken';
+
 describe('Application Tokens', function() {
   it('get token', function() {
     const serverTokens = new ServerTokens();

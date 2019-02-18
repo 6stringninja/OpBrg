@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ServerTokens_1 = require("./ServerTokens");
-const ApplicationToken_1 = require("./ApplicationToken");
-const ApplicationTokenHelper_1 = require("./ApplicationTokenHelper");
+const ApplicationTokenHelper_1 = require("./Application/ApplicationTokenHelper");
+const ApplicationToken_1 = require("./Application/ApplicationToken");
 describe('Application Tokens', function () {
     it('get token', function () {
         const serverTokens = new ServerTokens_1.ServerTokens();

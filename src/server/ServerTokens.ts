@@ -1,23 +1,26 @@
-import { ApplicationToken } from './ApplicationToken';
-import { ApplicationTokenHelper } from './ApplicationTokenHelper';
-import { ApplicationClients } from './ApplicationClients';
-export class ServerTokenValidateResult {
-  constructor(public token: ApplicationToken, public success = false) {}
-}
+
+import { ApplicationTokenHelper } from './Application/ApplicationTokenHelper';
+import { ApplicationClients } from './Application/ApplicationClients';
+import { isUndefined } from 'util';
+import { ServerTokenValidateResult } from './ServerTokenValidateResult';
+import { ApplicationToken } from './Application/ApplicationToken';
+
+
 export class ServerTokens {
   tokens: ApplicationToken[] = [];
   applicationClients: ApplicationClients;
 
   constructor(public password = ApplicationTokenHelper.generateIdentifier()) {
-    this.applicationClients = new ApplicationClients(this);
+    this.applicationClients =  ApplicationClients.create(this);
   }
 
-  getToken(name: string): ApplicationToken {
+  getToken(name: string): ApplicationToken | undefined {
     return this.tokens.find(f => f.name == name);
   }
 
-  addOrUpdateToken(token: ApplicationToken): ApplicationToken {
+  addOrUpdateToken(token: ApplicationToken | undefined): ApplicationToken | undefined {
     if (this.isEmptyToken(token)) return token;
+    if (isUndefined(token)) return token;
     const findTokenIndex = this.findTokenIndexByName(token);
     if (findTokenIndex > -1) {
       this.tokens[findTokenIndex] = token;
@@ -28,7 +31,7 @@ export class ServerTokens {
   }
 
   isValidServerPassword(password: string): boolean {
-    return password && this.password && this.password === password;
+    return !!(password && this.password && this.password === password);
   }
 
   authenticateNewToken = (
@@ -51,7 +54,7 @@ export class ServerTokens {
     );
 
   validateToken(token: ApplicationToken): ServerTokenValidateResult {
-    const isValidatedToken = this.isValidToken(token);
+    const isValidatedToken = !!this.isValidToken(token);
     return new ServerTokenValidateResult(
       isValidatedToken ? this.updateSoonToExpireToken(token) : token,
       isValidatedToken
@@ -68,12 +71,12 @@ export class ServerTokens {
 
   private updateSoonToExpireToken = (
     token: ApplicationToken
-  ): ApplicationToken =>
+  ): ApplicationToken | undefined =>
     ApplicationTokenHelper.isAboutToExpire(token)
       ? this.addOrUpdateToken(ApplicationTokenHelper.setTokenIssuedAndId(token))
       : token;
 
-  private isEmptyToken = (token: ApplicationToken) => !(token && token.name);
+  private isEmptyToken = (token: ApplicationToken | undefined) => !(token && token.name);
   private findTokenIndexByName = (token: ApplicationToken) =>
     this.tokens.findIndex(f => f.name === token.name);
 }

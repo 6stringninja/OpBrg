@@ -1,4 +1,5 @@
 import { ApplicationTokenHelper } from './ApplicationTokenHelper';
+import { ApplicationToken } from './ApplicationToken';
 describe('Application Token Helper', function() {
   it('static method generateIdentifier generates id 27 chars long', function() {
       const id = ApplicationTokenHelper.generateIdentifier();
@@ -41,4 +42,13 @@ describe('Application Token Helper', function() {
     id.issued = new Date().getTime() - 1000;
       expect(ApplicationTokenHelper.isAboutToExpire(id)).toBe(true);
   });
+  it('generated ids should be created and unique', function() {
+    const id = ApplicationTokenHelper.createToken('test');
+  const token2 = ApplicationToken.create('test1');
+  const nid = token2.generateIdentifier();
+
+  expect(id.id).toBeTruthy();
+  expect(token2.id).toBeTruthy();
+  expect(token2.id !== id.id).toBeTruthy();
+});
 });

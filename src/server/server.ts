@@ -1,2 +1,1 @@
-import { ApplicationToken } from './ApplicationToken';
 

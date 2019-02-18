@@ -1,14 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ApplicationTokenHelper_1 = require("./ApplicationTokenHelper");
-const ApplicationClients_1 = require("./ApplicationClients");
-class ServerTokenValidateResult {
-    constructor(token, success = false) {
-        this.token = token;
-        this.success = success;
-    }
-}
-exports.ServerTokenValidateResult = ServerTokenValidateResult;
+const ApplicationTokenHelper_1 = require("./Application/ApplicationTokenHelper");
+const ApplicationClients_1 = require("./Application/ApplicationClients");
+const util_1 = require("util");
+const ServerTokenValidateResult_1 = require("./ServerTokenValidateResult");
 class ServerTokens {
     constructor(password = ApplicationTokenHelper_1.ApplicationTokenHelper.generateIdentifier()) {
         this.password = password;
@@ -28,13 +23,15 @@ class ServerTokens {
             : token;
         this.isEmptyToken = (token) => !(token && token.name);
         this.findTokenIndexByName = (token) => this.tokens.findIndex(f => f.name === token.name);
-        this.applicationClients = new ApplicationClients_1.ApplicationClients(this);
+        this.applicationClients = ApplicationClients_1.ApplicationClients.create(this);
     }
     getToken(name) {
         return this.tokens.find(f => f.name == name);
     }
     addOrUpdateToken(token) {
         if (this.isEmptyToken(token))
+            return token;
+        if (util_1.isUndefined(token))
             return token;
         const findTokenIndex = this.findTokenIndexByName(token);
         if (findTokenIndex > -1) {
@@ -46,11 +43,11 @@ class ServerTokens {
         return token.clone();
     }
     isValidServerPassword(password) {
-        return password && this.password && this.password === password;
+        return !!(password && this.password && this.password === password);
     }
     validateToken(token) {
-        const isValidatedToken = this.isValidToken(token);
-        return new ServerTokenValidateResult(isValidatedToken ? this.updateSoonToExpireToken(token) : token, isValidatedToken);
+        const isValidatedToken = !!this.isValidToken(token);
+        return new ServerTokenValidateResult_1.ServerTokenValidateResult(isValidatedToken ? this.updateSoonToExpireToken(token) : token, isValidatedToken);
     }
     removeExpiredTokens() {
         const countPriorToFilter = this.tokens.length;
