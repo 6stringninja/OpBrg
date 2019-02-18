@@ -1,36 +1,41 @@
 import { ServerTokens } from './ServerTokens';
 import { ApplicationTokenHelper } from '../Application/ApplicationTokenHelper';
 import { ApplicationToken } from '../Application/ApplicationToken';
-
+import { container } from 'tsyringe';
+import { ApplicationTokensSerializerJsonFileService } from '../Services/SerializeService';
+import { ApplicationTokensSerializerTestService } from '../Services/SerializerTestService';
+container.register('ISerializerService<ApplicationToken[]>', {
+  useClass: ApplicationTokensSerializerTestService
+});
 describe('Application Tokens', function() {
   it('get token', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     serverTokens.addOrUpdateToken(ApplicationTokenHelper.createToken('test'));
     const token = serverTokens.getToken('test');
     expect(token).toBeDefined();
   });
 
   it('not get token', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     serverTokens.addOrUpdateToken(ApplicationTokenHelper.createToken('test'));
     const token = serverTokens.getToken('test2');
     expect(token).toBeFalsy();
   });
 
   it('default pw should be 27 chars long', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     expect(serverTokens.password.length).toBe(27);
   });
 
   it('should as token to collection', function() {
-    const serverTokens = new ServerTokens();
-    serverTokens.addOrUpdateToken(  ApplicationToken.create ('test'));
+    const serverTokens = ServerTokens.create();
+    serverTokens.addOrUpdateToken(ApplicationToken.create('test'));
     expect(serverTokens.tokens.length).toBe(1);
   });
 
   it('should as update token in collection', function() {
-    const serverTokens = new ServerTokens();
-    serverTokens.addOrUpdateToken(ApplicationToken.create ('test'));
+    const serverTokens = ServerTokens.create();
+    serverTokens.addOrUpdateToken(ApplicationToken.create('test'));
     const id = serverTokens.tokens[0].id;
     const nt = ApplicationTokenHelper.createToken('test');
     serverTokens.addOrUpdateToken(nt);
@@ -39,14 +44,14 @@ describe('Application Tokens', function() {
   });
 
   it('should authenticate and return token', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     expect(serverTokens.tokens.length).toBe(1);
     expect(serverTokens.tokens[0].id === t.id).toBe(true);
   });
 
   it('should not authenticate and return falsey', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
 
     const t = serverTokens.authenticateNewToken('test', 'adfs');
 
@@ -55,13 +60,13 @@ describe('Application Tokens', function() {
   });
 
   it('should validate Token return true', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     expect(serverTokens.isValidToken(t)).toBeTruthy();
   });
 
   it('should not validate token when id does not match stored token', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     t.id = ApplicationTokenHelper.generateIdentifier();
     const res = serverTokens.isValidToken(t);
@@ -70,7 +75,7 @@ describe('Application Tokens', function() {
   });
 
   it('should not validate token when name does not match stored token', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     t.name = ApplicationTokenHelper.generateIdentifier();
     const res = serverTokens.isValidToken(t);
@@ -78,7 +83,7 @@ describe('Application Tokens', function() {
   });
 
   it('should not validate token when name issued not match stored token', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     t.issued++;
     const res = serverTokens.isValidToken(t);
@@ -86,7 +91,7 @@ describe('Application Tokens', function() {
   });
 
   it('should not validate token when issued has expired', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     t.issued = serverTokens.tokens[0].issued = new Date().getTime() + 100;
 
@@ -96,7 +101,7 @@ describe('Application Tokens', function() {
   });
 
   it('should not validate toke or blow up with unexpected data', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     serverTokens.authenticateNewToken('test', serverTokens.password);
     const copyToken = () => Object.assign({}, serverTokens.tokens[0]);
 
@@ -116,7 +121,7 @@ describe('Application Tokens', function() {
   });
 
   it('should remove expired tokens', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     for (let index = 0; index < 5; index++) {
       serverTokens.authenticateNewToken('test' + index, serverTokens.password);
       if (index % 2) {
@@ -129,7 +134,7 @@ describe('Application Tokens', function() {
   });
 
   it('should  validate token as success', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     // tslint:disable-next-line:max-line-length
     expect(
       serverTokens.validateToken(
@@ -139,7 +144,7 @@ describe('Application Tokens', function() {
   });
 
   it('should not  validate token as success', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     // tslint:disable-next-line:max-line-length
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     t.id = '12fs';
@@ -147,7 +152,7 @@ describe('Application Tokens', function() {
   });
 
   it('should not validate token as success', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     // tslint:disable-next-line:max-line-length
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     t.issued = new Date().getTime() - 100;
@@ -155,7 +160,7 @@ describe('Application Tokens', function() {
   });
 
   it('should validate token as success and update soon to expire token', function() {
-    const serverTokens = new ServerTokens();
+    const serverTokens = ServerTokens.create();
     // tslint:disable-next-line:max-line-length
     const t = serverTokens.authenticateNewToken('test', serverTokens.password);
     expect(!!t.id).toBeTruthy();
@@ -171,4 +176,29 @@ describe('Application Tokens', function() {
     expect(tc.issued === vl.token.issued).toBe(false);
     expect(tc.name === vl.token.name).toBe(true);
   });
+  it('should load tokens', function () {
+    const serverTokens = ServerTokens.create();
+    const deserializeResult = serverTokens.serializeTokensService.deserialize();
+    expect(deserializeResult.success ).toBeTruthy();
+     serverTokens.authenticateNewToken('test', serverTokens.password);
+    expect(serverTokens.tokens.length).toBe(1);
+    serverTokens.authenticateNewToken('test', serverTokens.password);
+    serverTokens.serializeTokensService.serialize(serverTokens.tokens);
+    console.log(serverTokens);
+  });
+  //
+
+it('should load file tokens', function () {
+  container.register('ISerializerService<ApplicationToken[]>', {
+    useClass: ApplicationTokensSerializerTestService
+  });
+  const serverTokens = ServerTokens.create();
+  const deserializeResult = serverTokens.serializeTokensService.deserialize();
+  expect(deserializeResult.success).toBeTruthy();
+ serverTokens.authenticateNewToken('test', serverTokens.password);
+  expect(serverTokens.tokens.length).toBe(1);
+  serverTokens.authenticateNewToken('test', serverTokens.password);
+  serverTokens.serializeTokensService.serialize(serverTokens.tokens);
+  console.log(serverTokens);
+});
 });

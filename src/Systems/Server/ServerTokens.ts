@@ -1,24 +1,44 @@
-
 import { ApplicationTokenHelper } from '../Application/ApplicationTokenHelper';
 import { ApplicationClients } from '../Application/ApplicationClients';
 import { isUndefined } from 'util';
 import { ServerTokenValidateResult } from './ServerTokenValidateResult';
 import { ApplicationToken } from '../Application/ApplicationToken';
-
-
+import { container, inject, autoInjectable } from 'tsyringe';
+import {
+  ISerializerService,
+  ApplicationTokensSerializerJsonFileService
+} from '../Services/SerializeService';
+container.register('ISerializerService<ApplicationToken[]>', {
+  useClass: ApplicationTokensSerializerJsonFileService
+});
+@autoInjectable()
 export class ServerTokens {
   tokens: ApplicationToken[] = [];
   applicationClients: ApplicationClients;
-
-  constructor(public password = ApplicationTokenHelper.generateIdentifier()) {
-    this.applicationClients =  ApplicationClients.create(this);
+  password = ApplicationTokenHelper.generateIdentifier();
+  constructor(
+    @inject('ISerializerService<ApplicationToken[]>')
+    public serializeTokensService: ISerializerService<ApplicationToken[]>
+  ) {
+    const result = this.serializeTokensService.deserialize();
+    if (result.success && result.result) {
+      this.tokens = result.result;
+    }
+    this.applicationClients = ApplicationClients.create(this);
   }
+  static create(password = ApplicationTokenHelper.generateIdentifier()) {
+    const obj = container.resolve(ServerTokens);
+    obj.password = password;
 
+    return obj;
+  }
   getToken(name: string): ApplicationToken | undefined {
     return this.tokens.find(f => f.name == name);
   }
 
-  addOrUpdateToken(token: ApplicationToken | undefined): ApplicationToken | undefined {
+  addOrUpdateToken(
+    token: ApplicationToken | undefined
+  ): ApplicationToken | undefined {
     if (this.isEmptyToken(token)) return token;
     if (isUndefined(token)) return token;
     const findTokenIndex = this.findTokenIndexByName(token);
@@ -76,7 +96,8 @@ export class ServerTokens {
       ? this.addOrUpdateToken(ApplicationTokenHelper.setTokenIssuedAndId(token))
       : token;
 
-  private isEmptyToken = (token: ApplicationToken | undefined) => !(token && token.name);
+  private isEmptyToken = (token: ApplicationToken | undefined) =>
+    !(token && token.name);
   private findTokenIndexByName = (token: ApplicationToken) =>
     this.tokens.findIndex(f => f.name === token.name);
 }
