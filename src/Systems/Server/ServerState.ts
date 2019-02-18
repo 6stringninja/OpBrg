@@ -10,7 +10,6 @@ import {
   ApplicationClientsSerializerJsonFileService
 } from '../Services/SerializeService';
 
-import { UidGeneratorService } from '../Services/UidGeneratorService';
 container.registerSingleton(
   'ISerializerService<ApplicationClient[]>',
   ApplicationClientsSerializerJsonFileService
@@ -20,7 +19,7 @@ container.register('ISerializerService<ApplicationToken[]>', {
 });
 
 @autoInjectable()
-export class ServerTokens {
+export class ServerState {
   tokens: ApplicationToken[] = [];
   applicationClients: ApplicationClients;
   password = ApplicationTokenHelper.generateIdentifier();
@@ -35,7 +34,7 @@ export class ServerTokens {
     this.applicationClients = ApplicationClients.create(this);
   }
   static create(password = ApplicationTokenHelper.generateIdentifier()) {
-    const obj = container.resolve(ServerTokens);
+    const obj = container.resolve(ServerState);
     obj.password = password;
 
     return obj;
@@ -130,7 +129,10 @@ export class ServerTokens {
     }
     return false;
   }
- 
+  loadAll() {
+    return !!(this.loadClients() && this.loadTokens());
+  }
+
   private filterOutExpiredTokens = () =>
     this.tokens.filter(f => f.issued < new Date().getTime());
 

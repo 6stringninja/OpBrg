@@ -43,9 +43,15 @@ let ApplicationClients = ApplicationClients_1 = class ApplicationClients {
         this.validatedApplicationClientCreateResult = (name, clientpassword) => this.doesClientNameExist(name)
             ? ApplicationClientCreateResult_1.ApplicationClientCreateResult.NameUnavailable
             : this.addClientApplicationClientCreateResult(name, clientpassword);
-        this.addClientApplicationClientCreateResult = (name, clientpassword) => !!this.addClient(name, clientpassword)
-            ? ApplicationClientCreateResult_1.ApplicationClientCreateResult.Success
-            : ApplicationClientCreateResult_1.ApplicationClientCreateResult.Error;
+        this.addClientApplicationClientCreateResult = (name, clientpassword) => {
+            const result = !!this.addClient(name, clientpassword)
+                ? ApplicationClientCreateResult_1.ApplicationClientCreateResult.Success
+                : ApplicationClientCreateResult_1.ApplicationClientCreateResult.Error;
+            if (result === ApplicationClientCreateResult_1.ApplicationClientCreateResult.Success) {
+                this.save();
+            }
+            return result;
+        };
     }
     static create(serverTokens) {
         const appClients = tsyringe_1.container.resolve(ApplicationClients_1);

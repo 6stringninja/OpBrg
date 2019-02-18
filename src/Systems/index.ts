@@ -1,6 +1,6 @@
-import { Server } from './Server/server';
+import { Server } from './Server/Server';
 
- 
+
 
 const server = new Server();
-server.run();
+ server.start();

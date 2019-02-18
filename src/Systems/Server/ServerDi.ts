@@ -8,7 +8,7 @@ export class ServerDi {
   constructor() {
 
   }
-  run(container: DependencyContainer): void {
+  load(container: DependencyContainer): void {
 
     container.registerSingleton(
       'ISerializerService<ApplicationClient[]>',

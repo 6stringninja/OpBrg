@@ -8,25 +8,35 @@ const express = require("express");
 const ServerConfig_json_1 = __importDefault(require("./ServerConfig.json"));
 const tsyringe_1 = require("tsyringe");
 const ServerDi_1 = require("./ServerDi");
-const ServerTokens_js_1 = require("./ServerTokens.js");
+const ServerState_1 = require("./ServerState");
+const CreateClientMessage_js_1 = require("./Messages/CreateClientMessage.js");
+const ApplicationClientCreateResult_js_1 = require("../Application/ApplicationClientCreateResult.js");
 class Server {
     constructor(config = ServerConfig_json_1.default) {
         this.config = config;
         this.app = express();
-        new ServerDi_1.ServerDi().run(tsyringe_1.container);
-        this.serverTokens = ServerTokens_js_1.ServerTokens.create(this.config.serverPassword);
+        new ServerDi_1.ServerDi().load(tsyringe_1.container);
+        this.serverState = ServerState_1.ServerState.create(config.serverPassword);
+        if (!this.serverState.loadAll())
+            throw new Error('failed to load json files');
     }
-    load() {
-        return !!(this.serverTokens.loadClients() &&
-            this.serverTokens.loadTokens());
-    }
-    run() {
-        this.load();
-        this.app.get('/', function (req, res) {
-            res.send('Hello World!');
+    start() {
+        console.log(this.config.serverPassword);
+        this.app.use(express.json());
+        this.app.post('/api/createnew', (req, res) => {
+            const param = req.body;
+            console.log(req.body);
+            const retrn = new CreateClientMessage_js_1.CreateClientMessageResult();
+            if (!!param && this.serverState) {
+                const result = this.serverState.applicationClients.createClient(param.name, param.serverpassword, param.clientpassword);
+                console.log(result);
+                retrn.success = result === ApplicationClientCreateResult_js_1.ApplicationClientCreateResult.Success;
+                retrn.error = retrn.success ? undefined : result.toString();
+            }
+            res.send(retrn);
         });
         this.app.listen(this.config.port, () => {
-            console.log(`Example app listening on port ${this.config.port}!`);
+            console.log(`Example app listening on port http://localhost:${this.config.port}/ !`);
         });
     }
 }

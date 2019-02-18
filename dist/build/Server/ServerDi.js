@@ -4,7 +4,7 @@ const SerializeService_1 = require("../Services/SerializeService");
 class ServerDi {
     constructor() {
     }
-    run(container) {
+    load(container) {
         container.registerSingleton('ISerializerService<ApplicationClient[]>', SerializeService_1.ApplicationClientsSerializerJsonFileService);
         container.registerSingleton('ISerializerService<ApplicationToken[]>', SerializeService_1.ApplicationTokensSerializerJsonFileService);
     }

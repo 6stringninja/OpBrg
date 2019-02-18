@@ -1,8 +1,11 @@
-import { ServerTokens } from '../Server/ServerTokens';
+import { ServerState } from '../Server/ServerState';
 import { ApplicationClientCreateResult } from './ApplicationClientCreateResult';
 import { ApplicationClient } from './ApplicationClient';
 import { container, autoInjectable, inject } from 'tsyringe';
-import { ISerializerService, ApplicationClientsSerializerJsonFileService } from '../Services/SerializeService';
+import {
+  ISerializerService,
+  ApplicationClientsSerializerJsonFileService
+} from '../Services/SerializeService';
 container.registerSingleton(
   'ISerializerService<ApplicationClient[]>',
   ApplicationClientsSerializerJsonFileService
@@ -10,12 +13,12 @@ container.registerSingleton(
 @autoInjectable()
 export class ApplicationClients {
   clients: ApplicationClient[] = [];
-  serverTokens: ServerTokens | undefined;
+  serverTokens: ServerState | undefined;
   constructor(
     @inject('ISerializerService<ApplicationClient[]>')
     public serializeService: ISerializerService<ApplicationClient[]>
   ) {}
-  static create(serverTokens: ServerTokens) {
+  static create(serverTokens: ServerState) {
     const appClients = container.resolve(ApplicationClients);
     appClients.serverTokens = serverTokens;
     return appClients;
@@ -67,10 +70,15 @@ export class ApplicationClients {
   private addClientApplicationClientCreateResult = (
     name: string,
     clientpassword: string
-  ): ApplicationClientCreateResult =>
-    !!this.addClient(name, clientpassword)
+  ): ApplicationClientCreateResult => {
+    const result = !!this.addClient(name, clientpassword)
       ? ApplicationClientCreateResult.Success
       : ApplicationClientCreateResult.Error;
+    if (result === ApplicationClientCreateResult.Success) {
+      this.save();
+    }
+    return result;
+  };
 
   isAuthorizedClient(name: string, password: string): boolean {
     return !!(

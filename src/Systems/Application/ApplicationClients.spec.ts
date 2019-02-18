@@ -1,4 +1,4 @@
-import { ServerTokens } from '../Server/ServerTokens';
+import { ServerState } from '../Server/ServerState';
 import { ApplicationClientCreateResult } from './ApplicationClientCreateResult';
 import { ApplicationClients } from './ApplicationClients';
 import {
@@ -11,9 +11,9 @@ import { ApplicationClientSerializerTestService } from '../Services/SerializerTe
 container.registerSingleton('ISerializerService<T>', ApplicationClientSerializerTestService);
 describe('Application Tokens', function() {
   it('should create client', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
-    const t = serverTokens.applicationClients.createClient(
+    const serverState = ServerState.create();
+    serverState.password = 'test';
+    const t = serverState.applicationClients.createClient(
       'test',
       'test',
       'test'
@@ -22,10 +22,10 @@ describe('Application Tokens', function() {
     expect(t).toBe(ApplicationClientCreateResult.Success);
   });
   it('should not create client - name taken', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
-    serverTokens.applicationClients.createClient('test', 'test', 'test');
-    const t = serverTokens.applicationClients.createClient(
+    const serverState = ServerState.create();
+    serverState.password = 'test';
+    serverState.applicationClients.createClient('test', 'test', 'test');
+    const t = serverState.applicationClients.createClient(
       'test',
       'test',
       'test'
@@ -35,10 +35,10 @@ describe('Application Tokens', function() {
   });
 
   it('should not create client - incorrect password error', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
+    const serverState = ServerState.create();
+    serverState.password = 'test';
 
-    const t = serverTokens.applicationClients.createClient(
+    const t = serverState.applicationClients.createClient(
       'test',
       'test2',
       'test2'
@@ -47,44 +47,44 @@ describe('Application Tokens', function() {
     expect(t).toBe(ApplicationClientCreateResult.Error);
   });
   it('should not create client - no name error', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
+    const serverState = ServerState.create();
+    serverState.password = 'test';
 
-    const t = serverTokens.applicationClients.createClient('', 'test', 'test2');
+    const t = serverState.applicationClients.createClient('', 'test', 'test2');
 
     expect(t).toBe(ApplicationClientCreateResult.Error);
   });
   it('should not create client - no client password', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
+    const serverState = ServerState.create();
+    serverState.password = 'test';
 
-    const t = serverTokens.applicationClients.createClient('test', 'test2', '');
+    const t = serverState.applicationClients.createClient('test', 'test2', '');
 
     expect(t).toBe(ApplicationClientCreateResult.Error);
   });
   it('should   create 2 clients  ', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
-    serverTokens.applicationClients.createClient('test', 'test', 'test');
-    const t = serverTokens.applicationClients.createClient(
+    const serverState = ServerState.create();
+    serverState.password = 'test';
+    serverState.applicationClients.createClient('test', 'test', 'test');
+    const t = serverState.applicationClients.createClient(
       'test2',
       'test',
       'test'
     );
 
-    expect(serverTokens.applicationClients.clients.length).toBe(2);
+    expect(serverState.applicationClients.clients.length).toBe(2);
   });
   it('should authorize client', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
+    const serverState = ServerState.create();
+    serverState.password = 'test';
     for (let index = 0; index < 5; index++) {
-      serverTokens.applicationClients.createClient(
+      serverState.applicationClients.createClient(
         `test${index}`,
         'test',
         'test'
       );
       expect(
-        serverTokens.applicationClients.isAuthorizedClient(
+        serverState.applicationClients.isAuthorizedClient(
           `test${index}`,
           'test'
         )
@@ -92,24 +92,24 @@ describe('Application Tokens', function() {
     }
   });
   it('should not authorize client', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
-    serverTokens.applicationClients.createClient('test', 'test', 'test');
+    const serverState = ServerState.create();
+    serverState.password = 'test';
+    serverState.applicationClients.createClient('test', 'test', 'test');
     expect(
-      serverTokens.applicationClients.isAuthorizedClient('test', 'test2')
+      serverState.applicationClients.isAuthorizedClient('test', 'test2')
     ).toBe(false);
   });
 
   it('should not authorize client', function() {
-    const serverTokens = ServerTokens.create();
-    serverTokens.password = 'test';
-    serverTokens.applicationClients.createClient('test', 'test', 'test');
+    const serverState = ServerState.create();
+    serverState.password = 'test';
+    serverState.applicationClients.createClient('test', 'test', 'test');
     expect(
-      serverTokens.applicationClients.isAuthorizedClient('test1', 'test')
+      serverState.applicationClients.isAuthorizedClient('test1', 'test')
     ).toBe(false);
   });
   it('should create ApplicationClients', function() {
-    const test = ApplicationClients.create(ServerTokens.create());
+    const test = ApplicationClients.create(ServerState.create());
 
     expect(test).toBeDefined();
   });

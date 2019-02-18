@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ServerTokens_1;
+var ServerState_1;
 "use strict";
 const ApplicationTokenHelper_1 = require("../Application/ApplicationTokenHelper");
 const ApplicationClients_1 = require("../Application/ApplicationClients");
@@ -24,7 +24,7 @@ tsyringe_1.container.registerSingleton('ISerializerService<ApplicationClient[]>'
 tsyringe_1.container.register('ISerializerService<ApplicationToken[]>', {
     useClass: SerializeService_1.ApplicationTokensSerializerJsonFileService
 });
-let ServerTokens = ServerTokens_1 = class ServerTokens {
+let ServerState = ServerState_1 = class ServerState {
     constructor(serializeTokensService) {
         this.serializeTokensService = serializeTokensService;
         this.tokens = [];
@@ -51,7 +51,7 @@ let ServerTokens = ServerTokens_1 = class ServerTokens {
         this.applicationClients = ApplicationClients_1.ApplicationClients.create(this);
     }
     static create(password = ApplicationTokenHelper_1.ApplicationTokenHelper.generateIdentifier()) {
-        const obj = tsyringe_1.container.resolve(ServerTokens_1);
+        const obj = tsyringe_1.container.resolve(ServerState_1);
         obj.password = password;
         return obj;
     }
@@ -116,10 +116,13 @@ let ServerTokens = ServerTokens_1 = class ServerTokens {
         }
         return false;
     }
+    loadAll() {
+        return !!(this.loadClients() && this.loadTokens());
+    }
 };
-ServerTokens = ServerTokens_1 = __decorate([
+ServerState = ServerState_1 = __decorate([
     tsyringe_1.autoInjectable(),
     __param(0, tsyringe_1.inject('ISerializerService<ApplicationToken[]>')),
     __metadata("design:paramtypes", [Object])
-], ServerTokens);
-exports.ServerTokens = ServerTokens;
+], ServerState);
+exports.ServerState = ServerState;

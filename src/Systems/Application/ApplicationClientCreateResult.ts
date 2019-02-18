@@ -1,5 +1,5 @@
 export enum ApplicationClientCreateResult {
-  Error,
-  NameUnavailable,
-  Success
+  Error = "error",
+  NameUnavailable = "name unavailable",
+  Success = "success"
 }
