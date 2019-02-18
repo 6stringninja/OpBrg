@@ -1,4 +1,4 @@
-import { ServerTokens } from '../Common/ServerTokens';
+import { ServerTokens } from '../Server/ServerTokens';
 import { ApplicationClientCreateResult } from './ApplicationClientCreateResult';
 import { ApplicationClient } from './ApplicationClient';
 import { container, autoInjectable, inject } from 'tsyringe';

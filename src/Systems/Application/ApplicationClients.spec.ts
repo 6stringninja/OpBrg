@@ -1,4 +1,4 @@
-import { ServerTokens } from '../Common/ServerTokens';
+import { ServerTokens } from '../Server/ServerTokens';
 import { ApplicationClientCreateResult } from './ApplicationClientCreateResult';
 import { ApplicationClients } from './ApplicationClients';
 import { SerializerJsonFileService } from '../Services/SerializeService';
