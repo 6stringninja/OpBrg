@@ -54,6 +54,7 @@ export class GetTokenMessageWrapper extends MessageWrapperBase<
                 input.serverpassword,
                 input.clientpassword
             );
+            
             this.messageResult.success =
                 !!createResult ;
             if (!this.messageResult.success) {
