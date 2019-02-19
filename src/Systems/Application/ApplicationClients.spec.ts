@@ -8,7 +8,10 @@ import {
 import { ApplicationClient } from './ApplicationClient';
 import { container } from 'tsyringe';
 import { ApplicationClientSerializerTestService } from '../Services/SerializerTestService';
-container.registerSingleton('ISerializerService<T>', ApplicationClientSerializerTestService);
+container.registerSingleton(
+  'ISerializerService<T>',
+  ApplicationClientSerializerTestService
+);
 describe('Application Tokens', function() {
   it('should create client', function() {
     const serverState = ServerState.create();
@@ -113,52 +116,4 @@ describe('Application Tokens', function() {
 
     expect(test).toBeDefined();
   });
-    /*
-  it('should create ApplicationClients Load', function() {
-    container.registerSingleton('ISerializerService<T>', ApplicationClientSerializerTestService);
-    const test = ServerTokens.create('test');
-    test.applicationClients.createClient('test', 'test', 'test');
-    expect(test.applicationClients.clients.length).toBe(1);
-    expect(test.applicationClients.save()).toBeTruthy();
-    (test.applicationClients
-      .serializeService as ApplicationClientSerializerTestService).fakeitems.push(
-      new ApplicationClient('test2', 'test')
-    );
-
-    // expect((test.serializeService as SerializerTestService).fakeitems.length).toBe(1);
-    expect(test.applicationClients.load()).toBeTruthy();
-    expect(test.applicationClients.clients.length).toBe(2);
-  });
-
-  it('should create ApplicationClients Load file', async function(done) {
-    container.registerSingleton(
-      'ISerializerService<ApplicationClient[]>',
-      ApplicationClientsSerializerJsonFileService
-    );
-    const test = ServerTokens.create('test');
-    test.applicationClients.createClient('test', 'test', 'test');
-    expect(test.applicationClients.clients.length).toBe(2);
-    expect(test.applicationClients.save()).toBeTruthy();
-    //   ((test.applicationClients.serializeService) as SerializerTestService)
-    //    .fakeitems.push(new ApplicationClient('test2', 'test'));
-
-    // expect((test.serializeService as SerializerTestService).fakeitems.length).toBe(1);
-    test.applicationClients.clients.length = 0;
-    expect(test.applicationClients.clients.length).toBe(0);
-    test.applicationClients.createClient('test', 'test', 'test');
-    test.applicationClients.createClient('test2', 'test', 'test');
-    console.log(test.applicationClients.clients);
-
-    expect(test.applicationClients.clients.length).toBe(2);
-    setTimeout(() => {
-      test.applicationClients.save();
-      setTimeout(() => {
-        expect(test.applicationClients.load()).toBeTruthy();
-        expect(test.applicationClients.clients.length).toBe(2);
-        done();
-      }, 100);
-    }, 100);
-    console.log(test.applicationClients.clients);
-  });
-  */
 });

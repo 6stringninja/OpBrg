@@ -12,6 +12,7 @@ export enum MessageTypes {
   TestMessage = 'Test Message',
   ErrorMessage = 'Error Message',
   GetTokenMessage = 'Get Token Message',
+  IamAliveMessage = 'I am alive message'
 }
 export class CreateClientMessageInput extends MessageInputBase {
   constructor(

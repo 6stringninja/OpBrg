@@ -34,6 +34,7 @@ export abstract class MessageWrapperBase< T,  TInput extends MessageInputBase,  
         return;
       }
       this.authenticated = true;
+      this.serverState.addOrUpdateToken(this.messageResult.token);
       this.process(req, res, this.serverState);
     } catch (error) {
       console.log("callprocessExpress errored");
@@ -52,6 +53,7 @@ export abstract class MessageWrapperBase< T,  TInput extends MessageInputBase,  
     this.messageResult.success = tokenResult.success;
     this.messageResult.token = tokenResult.token;
     if (!this.messageResult.success) this.messageResult.error = "Invalid Token";
+    
     return this.messageResult.success;
   }
   constructor(

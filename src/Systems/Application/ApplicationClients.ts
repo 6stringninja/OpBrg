@@ -46,10 +46,11 @@ export class ApplicationClients {
     serverpassword: string,
     clientpassword: string
   ): ApplicationToken | undefined =>
-    this.isValidClientCredentialIsValid(name, serverpassword, clientpassword) && !!this.serverTokens
-      ? this.serverTokens.authenticateNewClientToken(name,clientpassword)
+    this.isValidClientCredentialIsValid(name, serverpassword, clientpassword) &&
+    !!this.serverTokens
+      ? this.serverTokens.authenticateNewClientToken(name, clientpassword)
       : undefined;
-      
+
   private isValidClientCredentialIsValid = (
     name: string,
     serverpassword: string,

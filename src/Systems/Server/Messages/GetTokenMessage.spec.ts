@@ -22,7 +22,7 @@ describe('Application Tokens', function() {
     req = {} as express.Request;
     res = {} as express.Response;
     res.send = function(b: any) {
-     // console.log({ 'sendresult:': b });
+      // console.log({ 'sendresult:': b });
       sendResult = b;
       return b;
     };

@@ -55,53 +55,65 @@ export class ServerState {
     } else {
       this.tokens.push(token);
     }
-    this.writeTokens();
-    return token.clone();
+    const index = this.applicationClients.clients.findIndex(
+      f => f.name === token.name
+    );
+    if (index > -1) {
+      this.applicationClients.clients[index].lastAccess = new Date().getTime();
+    }
+
+    this.writeAll();
+
+    return !token.clone ? undefined : token.clone();
   }
 
   isValidServerPassword(password: string): boolean {
     return !!(password && this.password && this.password === password);
   }
-  isValidClientPassword(name:string, password: string): boolean {
-    
+  isValidClientPassword(name: string, password: string): boolean {
     return !!(password && this.password && this.password === password);
   }
   authenticateNewClientToken = (
     name: string,
     password: string
-  ): ApplicationToken | undefined =>
-{  const token =   name && this.applicationClients.isAuthorizedClient(name,password )
-      ? this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
-      : undefined;
+  ): ApplicationToken | undefined => {
+    const token =
+      name && this.applicationClients.isAuthorizedClient(name, password)
+        ? this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
+        : undefined;
 
-      return token;
-    }
+    return token;
+  };
   authenticateNewToken = (
     name: string,
     password: string
   ): ApplicationToken | undefined =>
-    name &&  this.isValidServerPassword(password)
+    name && this.isValidServerPassword(password)
       ? this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
       : undefined;
 
-  isValidToken = (token: ApplicationToken) =>
-   { let tokenRequired =  token &&
-    token.name &&
-    token.id &&
-    token.issued &&
-    token.issued > new Date().getTime();
-   // console.log({isvalid: tokenRequired,token:token,tokens:this.tokens})
-    tokenRequired = tokenRequired &&
-    this.tokens.some(
-      s =>
-        s.name === token.name && s.id === token.id && s.issued === token.issued
-    );
-  return tokenRequired;}
+  isValidToken = (token: ApplicationToken) => {
+    let tokenRequired =
+      token &&
+      token.name &&
+      token.id &&
+      token.issued &&
+      token.issued > new Date().getTime();
+    // console.log({isvalid: tokenRequired,token:token,tokens:this.tokens})
+    tokenRequired =
+      tokenRequired &&
+      this.tokens.some(
+        s =>
+          s.name === token.name &&
+          s.id === token.id &&
+          s.issued === token.issued
+      );
+    return tokenRequired;
+  };
 
   validateToken(token: ApplicationToken): ServerTokenValidateResult {
     const isValidatedToken = !!this.isValidToken(token);
-  
-    
+
     return new ServerTokenValidateResult(
       isValidatedToken ? this.updateSoonToExpireToken(token) : token,
       isValidatedToken
@@ -118,7 +130,6 @@ export class ServerState {
       : this.writeTokens();
   }
   writeTokens() {
-    
     return this.serializeTokensService.serialize(this.tokens).success;
   }
   readTokens() {
@@ -164,7 +175,9 @@ export class ServerState {
   loadAll() {
     return !!(this.loadClients() && this.loadTokens());
   }
-
+  writeAll() {
+    return !!(this.writeClients() && this.writeTokens());
+  }
   private filterOutExpiredTokens = () =>
     this.tokens.filter(f => f.issued < new Date().getTime());
 
