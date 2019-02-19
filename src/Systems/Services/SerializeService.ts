@@ -15,11 +15,11 @@ export interface ISerializerService<T> {
 
 
 export abstract class SerializerJsonFileService<T> implements ISerializerService<T> {
- 
+
 
     constructor(public filename = '') {}
 
-    serialize(itemToSerialize:T): SerializerResult<string> {
+    serialize(itemToSerialize: T): SerializerResult<string> {
 
         const result = new SerializerResult<string>();
         result.result = JSON.stringify(itemToSerialize);
@@ -35,14 +35,14 @@ export abstract class SerializerJsonFileService<T> implements ISerializerService
         return result;
 
     }
-    filePath = () =>`${__dirname}\\${this.filename}`;
+    filePath = () => `${__dirname}\\${this.filename}`;
     deserialize(): SerializerResult<T> {
 
 
         const result = new SerializerResult<T>();
-     
+
         try {
-           
+
             result.result = JSON.parse(fs.readFileSync(this.filePath(), 'utf8')) as T;
             result.success = true;
         } catch (error) {
@@ -56,7 +56,7 @@ export abstract class SerializerJsonFileService<T> implements ISerializerService
 }
 @singleton()
 export class ApplicationClientsSerializerJsonFileService extends SerializerJsonFileService<ApplicationClient[]> {
-    constructor() { super('applicationClients.json');}
+    constructor() { super('applicationClients.json'); }
 }
 
 @singleton()

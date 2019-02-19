@@ -1,7 +1,7 @@
 import { ServerState } from '../../ServerState';
 import { MessageInputBase } from './MessageInputBase';
 import { MessageResultBase } from './MessageResultBase';
-import { MessageTypes } from "./MessageTypes";
+import { MessageTypes } from './MessageTypes';
 import express = require('express');
 export interface IMessageWrapper {
   process(
@@ -23,37 +23,37 @@ export abstract class MessageWrapperBase< T,  TInput extends MessageInputBase,  
   implements IMessageWrapper {
   typeOf: MessageTypes;
   authenticated = false;
-  processExpress(req: express.Request, res: express.Response):void {
+  processExpress(req: express.Request, res: express.Response): void {
 
     try {
       this.messageInput = JSON.parse(req.body) as TInput;
       if (!this.validateToken()) {
-    
+
         res.send(new ErrorMessageResult('Invalid Token'));
-      
+
         return;
       }
       this.authenticated = true;
       this.serverState.addOrUpdateToken(this.messageResult.token);
       this.process(req, res, this.serverState);
     } catch (error) {
-      console.log("callprocessExpress errored");
+      console.log('callprocessExpress errored');
       res.send(new ErrorMessageResult(error));
     }
-  
-   
+
+
   }
   validateToken() {
    // console.log({ tokens: this.serverState.tokens, token: this.messageInput.token })
-   
+
     if (!this.secured) return true;
     if (!this.messageInput || !this.messageInput.token) return false;
-   
+
     const tokenResult = this.serverState.validateToken(this.messageInput.token);
     this.messageResult.success = tokenResult.success;
     this.messageResult.token = tokenResult.token;
-    if (!this.messageResult.success) this.messageResult.error = "Invalid Token";
-    
+    if (!this.messageResult.success) this.messageResult.error = 'Invalid Token';
+
     return this.messageResult.success;
   }
   constructor(

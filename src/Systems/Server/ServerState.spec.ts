@@ -1,17 +1,17 @@
- 
+
 import { ApplicationTokenHelper } from '../Application/ApplicationTokenHelper';
 import { ApplicationToken } from '../Application/ApplicationToken';
 import { container } from 'tsyringe';
 import { ApplicationTokensSerializerJsonFileService } from '../Services/SerializeService';
 
-import {ServerState} from '../Server/ServerState';
+import { ServerState } from '../Server/ServerState';
 import fs from 'fs';
 
 describe('Application Tokens', function() {
   container.register('ISerializerService<ApplicationToken[]>', {
     useClass: ApplicationTokensSerializerJsonFileService
   });
-  
+
   beforeEach(function () {
     const serverState = ServerState.create();
    // serverState.tokens = [];
@@ -44,7 +44,7 @@ describe('Application Tokens', function() {
 
   it('should as update token in collection', function() {
     const serverState = ServerState.create();
-    
+
     serverState.addOrUpdateToken(ApplicationToken.create('test'));
     const id = serverState.tokens[0].id;
     const nt = ApplicationTokenHelper.createToken('test');

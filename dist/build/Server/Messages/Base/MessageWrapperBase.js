@@ -36,7 +36,7 @@ class MessageWrapperBase {
             this.process(req, res, this.serverState);
         }
         catch (error) {
-            console.log("callprocessExpress errored");
+            console.log('callprocessExpress errored');
             res.send(new ErrorMessageResult(error));
         }
     }
@@ -49,7 +49,7 @@ class MessageWrapperBase {
         this.messageResult.success = tokenResult.success;
         this.messageResult.token = tokenResult.token;
         if (!this.messageResult.success)
-            this.messageResult.error = "Invalid Token";
+            this.messageResult.error = 'Invalid Token';
         return this.messageResult.success;
     }
     newInput() {

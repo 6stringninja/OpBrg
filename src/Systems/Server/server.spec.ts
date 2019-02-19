@@ -100,7 +100,7 @@ describe('server ', () => {
     const req = {} as express.Request;
     const res = {} as express.Response;
     const input = new TestClientMessageInput();
-    token.id = "1";
+    token.id = '1';
     input.token = token;
 
     req.body = JSON.stringify(input);
@@ -110,7 +110,7 @@ describe('server ', () => {
     };
 
     msg.processExpress(req, res);
- 
+
     expect(!!(msg.messageResult.error && msg.messageResult.error === 'Invalid Token')).toBeTruthy();
   });
 });

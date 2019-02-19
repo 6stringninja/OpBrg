@@ -1,4 +1,4 @@
- 
+
 import serverConfig from './ServerConfig.json';
 import { IServerConfig } from './ServerConfig';
 describe('server config', function () {

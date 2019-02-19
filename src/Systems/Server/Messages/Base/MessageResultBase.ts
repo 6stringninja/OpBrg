@@ -1,5 +1,5 @@
 import { ApplicationToken } from '../../../Application/ApplicationToken';
-import { MessageTypes } from "./MessageTypes";
+import { MessageTypes } from './MessageTypes';
 export abstract class MessageResultBase<T> {
   token: ApplicationToken | undefined;
   nonce: string | undefined;

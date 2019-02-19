@@ -92,7 +92,7 @@ describe('Application Tokens', function() {
     req.body = JSON.stringify(input);
     msg.processExpress(req, res);
 
-     
+
     expect(sendResult.token).toBeTruthy();
   });
 
@@ -103,7 +103,7 @@ describe('Application Tokens', function() {
     input.serverpassword = 'dfsfsf';
     req.body = JSON.stringify(input);
     msg.processExpress(req, res);
-    
+
     expect(sendResult.token).toBeFalsy();
   });
 });
