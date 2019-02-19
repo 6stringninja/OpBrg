@@ -34,6 +34,10 @@ let ApplicationClients = ApplicationClients_1 = class ApplicationClients {
         this.createClient = (name, serverpassword, clientpassword) => this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)
             ? this.validatedApplicationClientCreateResult(name, clientpassword)
             : ApplicationClientCreateResult_1.ApplicationClientCreateResult.Error;
+        this.createToken = (name, serverpassword, clientpassword) => this.isValidClientCredentialIsValid(name, serverpassword, clientpassword) &&
+            !!this.serverTokens
+            ? this.serverTokens.authenticateNewClientToken(name, clientpassword)
+            : undefined;
         this.isValidClientCredentialIsValid = (name, serverpassword, clientpassword) => !!(this.serverTokens &&
             this.serverTokens.isValidServerPassword(serverpassword) &&
             !!clientpassword &&

@@ -28,13 +28,11 @@ class SerializerJsonFileService {
     serialize(itemToSerialize) {
         const result = new SerializerResult();
         result.result = JSON.stringify(itemToSerialize);
-        console.log({ path: this.filePath() });
         try {
             fs_1.default.writeFileSync(this.filePath(), result.result, 'utf8');
             result.success = true;
         }
         catch (error) {
-            console.log(error);
             result.success = false;
         }
         return result;

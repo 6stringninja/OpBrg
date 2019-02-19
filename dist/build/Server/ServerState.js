@@ -29,15 +29,28 @@ let ServerState = ServerState_1 = class ServerState {
         this.serializeTokensService = serializeTokensService;
         this.tokens = [];
         this.password = ApplicationTokenHelper_1.ApplicationTokenHelper.generateIdentifier();
+        this.authenticateNewClientToken = (name, password) => {
+            const token = name && this.applicationClients.isAuthorizedClient(name, password)
+                ? this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.createToken(name))
+                : undefined;
+            return token;
+        };
         this.authenticateNewToken = (name, password) => name && this.isValidServerPassword(password)
             ? this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.createToken(name))
             : undefined;
-        this.isValidToken = (token) => token &&
-            token.name &&
-            token.id &&
-            token.issued &&
-            token.issued > new Date().getTime() &&
-            this.tokens.some(s => s.name === token.name && s.id === token.id && s.issued === token.issued);
+        this.isValidToken = (token) => {
+            let tokenRequired = token &&
+                token.name &&
+                token.id &&
+                token.issued &&
+                token.issued > new Date().getTime();
+            tokenRequired =
+                tokenRequired &&
+                    this.tokens.some(s => s.name === token.name &&
+                        s.id === token.id &&
+                        s.issued === token.issued);
+            return tokenRequired;
+        };
         this.filterOutExpiredTokens = () => this.tokens.filter(f => f.issued < new Date().getTime());
         this.updateSoonToExpireToken = (token) => ApplicationTokenHelper_1.ApplicationTokenHelper.isAboutToExpire(token)
             ? this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.setTokenIssuedAndId(token))
@@ -70,9 +83,17 @@ let ServerState = ServerState_1 = class ServerState {
         else {
             this.tokens.push(token);
         }
-        return token.clone();
+        const index = this.applicationClients.clients.findIndex(f => f.name === token.name);
+        if (index > -1) {
+            this.applicationClients.clients[index].lastAccess = new Date().getTime();
+        }
+        this.writeAll();
+        return !token.clone ? undefined : token.clone();
     }
     isValidServerPassword(password) {
+        return !!(password && this.password && this.password === password);
+    }
+    isValidClientPassword(name, password) {
         return !!(password && this.password && this.password === password);
     }
     validateToken(token) {
@@ -116,8 +137,23 @@ let ServerState = ServerState_1 = class ServerState {
         }
         return false;
     }
+    resetTokens() {
+        this.tokens = [];
+        this.writeTokens();
+    }
+    resetClients() {
+        this.applicationClients.clients = [];
+        this.writeClients();
+    }
+    resetAll() {
+        this.resetClients();
+        this.resetTokens();
+    }
     loadAll() {
         return !!(this.loadClients() && this.loadTokens());
+    }
+    writeAll() {
+        return !!(this.writeClients() && this.writeTokens());
     }
 };
 ServerState = ServerState_1 = __decorate([

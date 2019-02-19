@@ -21,15 +21,12 @@ class Server {
             throw new Error('failed to load json files');
     }
     start() {
-        console.log(this.config.serverPassword);
         this.app.use(express.json());
         this.app.post('/api/createnew', (req, res) => {
             const param = req.body;
-            console.log(req.body);
             const retrn = new CreateClientMessage_js_1.CreateClientMessageResult();
             if (!!param && this.serverState) {
                 const result = this.serverState.applicationClients.createClient(param.name, param.serverpassword, param.clientpassword);
-                console.log(result);
                 retrn.success = result === ApplicationClientCreateResult_js_1.ApplicationClientCreateResult.Success;
                 retrn.error = retrn.success ? undefined : result.toString();
             }
