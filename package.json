@@ -7,7 +7,8 @@
     "test": "jasmine --stop-on-failure=false",
     "test-build": "tsc -p spec -w",
     "build": "tsc   -w",
-    "server": "nodemon ./dist/build/index.js --ignore *.json"
+    "server": "nodemon ./dist/build/index.js --ignore *.json",
+    "client": "nodemon ./dist/build/client/client.js --ignore *.json"
   },
   "author": "",
   "license": "ISC",
