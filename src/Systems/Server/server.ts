@@ -22,8 +22,7 @@ export class Server {
       throw new Error('failed to load json files');
   }
   start() {
-    console.log(this.config.serverPassword);
-
+     
     this.app.use(express.json());
 
     this.app.post(
@@ -31,7 +30,7 @@ export class Server {
       '/api/createnew',
       (req: express.Request, res: express.Response) => {
         const param = req.body as CreateClientMessageInput;
-        console.log(req.body);
+      //  console.log(req.body);
         const retrn = new CreateClientMessageResult();
         if (!!param && this.serverState) {
           const result = this.serverState.applicationClients.createClient(
@@ -39,7 +38,7 @@ export class Server {
             param.serverpassword,
             param.clientpassword
           );
-          console.log(result);
+      //    console.log(result);
 
           retrn.success = result === ApplicationClientCreateResult.Success;
           retrn.error = retrn.success ? undefined : result.toString();

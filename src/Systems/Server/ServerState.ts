@@ -55,34 +55,53 @@ export class ServerState {
     } else {
       this.tokens.push(token);
     }
+    this.writeTokens();
     return token.clone();
   }
 
   isValidServerPassword(password: string): boolean {
     return !!(password && this.password && this.password === password);
   }
+  isValidClientPassword(name:string, password: string): boolean {
+    
+    return !!(password && this.password && this.password === password);
+  }
+  authenticateNewClientToken = (
+    name: string,
+    password: string
+  ): ApplicationToken | undefined =>
+{  const token =   name && this.applicationClients.isAuthorizedClient(name,password )
+      ? this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
+      : undefined;
 
+      return token;
+    }
   authenticateNewToken = (
     name: string,
     password: string
   ): ApplicationToken | undefined =>
-    name && this.isValidServerPassword(password)
+    name &&  this.isValidServerPassword(password)
       ? this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
       : undefined;
 
   isValidToken = (token: ApplicationToken) =>
-    token &&
+   { let tokenRequired =  token &&
     token.name &&
     token.id &&
     token.issued &&
-    token.issued > new Date().getTime() &&
+    token.issued > new Date().getTime();
+   // console.log({isvalid: tokenRequired,token:token,tokens:this.tokens})
+    tokenRequired = tokenRequired &&
     this.tokens.some(
       s =>
         s.name === token.name && s.id === token.id && s.issued === token.issued
     );
+  return tokenRequired;}
 
   validateToken(token: ApplicationToken): ServerTokenValidateResult {
     const isValidatedToken = !!this.isValidToken(token);
+  
+    
     return new ServerTokenValidateResult(
       isValidatedToken ? this.updateSoonToExpireToken(token) : token,
       isValidatedToken
@@ -99,6 +118,7 @@ export class ServerState {
       : this.writeTokens();
   }
   writeTokens() {
+    
     return this.serializeTokensService.serialize(this.tokens).success;
   }
   readTokens() {
@@ -128,6 +148,18 @@ export class ServerState {
       return dataResult.success;
     }
     return false;
+  }
+  resetTokens() {
+    this.tokens = [];
+    this.writeTokens();
+  }
+  resetClients() {
+    this.applicationClients.clients = [];
+    this.writeClients();
+  }
+  resetAll() {
+    this.resetClients();
+    this.resetTokens();
   }
   loadAll() {
     return !!(this.loadClients() && this.loadTokens());

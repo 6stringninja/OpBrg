@@ -52,6 +52,7 @@ export class ApplicationTokenHelper {
   private static isObject = (what: any) => typeof what === 'object';
 
   static createToken(name: string | ApplicationToken): ApplicationToken | undefined {
+   // console.log(name);
     return this.isObject(name)
       ? this.setTokenIssuedAndId(this.copyToken(name as ApplicationToken))
       : ApplicationToken.create(

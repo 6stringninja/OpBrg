@@ -24,6 +24,7 @@ export class ApplicationClientSerializerTestService
     return result;
   }
 }
+/*
 @singleton()
 export class ApplicationTokensSerializerTestService
   implements ISerializerService<ApplicationToken[]> {
@@ -46,3 +47,4 @@ export class ApplicationTokensSerializerTestService
     return result;
   }
 }
+*/

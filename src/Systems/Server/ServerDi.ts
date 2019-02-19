@@ -1,6 +1,6 @@
 import { DependencyContainer } from 'tsyringe';
 import { UidGeneratorService } from '../Services/UidGeneratorService';
-import { ApplicationClientSerializerTestService, ApplicationTokensSerializerTestService } from '../Services/SerializerTestService';
+import { ApplicationClientSerializerTestService } from '../Services/SerializerTestService';
 import { ApplicationTokensSerializerJsonFileService, ApplicationClientsSerializerJsonFileService } from '../Services/SerializeService';
 
 export class ServerDi {

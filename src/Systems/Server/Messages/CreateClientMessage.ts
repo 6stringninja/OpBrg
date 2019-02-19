@@ -3,7 +3,9 @@ import { MessageInputBase } from './Base/MessageInputBase';
 import { MessageResultBase } from './Base/MessageResultBase';
 import { MessageWrapperBase } from './Base/MessageWrapperBase';
 export enum MessageTypes {
-  CreateClient = 'Create Client'
+  CreateClient = 'Create Client',
+  TestMessage = 'Test Message',
+  ErrorMessage = 'Error Message',
 }
 export class CreateClientMessageInput extends MessageInputBase {
   constructor(
@@ -25,11 +27,12 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
   CreateClientMessageInput,
   CreateClientMessageResult
 > {
-  constructor() {
+  constructor(serverState: ServerState) {
     super(
       'createclient',
       new CreateClientMessageInput(),
-      new CreateClientMessageResult()
+      new CreateClientMessageResult(),
+      serverState
     );
   }
   process(
