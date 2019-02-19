@@ -62,7 +62,7 @@ describe('server ', () => {
 
     req.body = JSON.stringify(input);
     res.send = function(b: any) {
-      console.log(b);
+   //   console.log(b);
       return b;
     };
 
@@ -105,7 +105,7 @@ describe('server ', () => {
 
     req.body = JSON.stringify(input);
     res.send = function (b: any) {
-      console.log(b);
+    //  console.log(b);
       return b;
     };
 

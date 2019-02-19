@@ -24,16 +24,19 @@ export abstract class MessageWrapperBase< T,  TInput extends MessageInputBase,  
   typeOf: MessageTypes;
   authenticated = false;
   processExpress(req: express.Request, res: express.Response):void {
+
     try {
       this.messageInput = JSON.parse(req.body) as TInput;
       if (!this.validateToken()) {
-
+    
         res.send(new ErrorMessageResult('Invalid Token'));
+      
         return;
       }
       this.authenticated = true;
-      this.process(res, req, this.serverState);
+      this.process(req, res, this.serverState);
     } catch (error) {
+      console.log("callprocessExpress errored");
       res.send(new ErrorMessageResult(error));
     }
   
@@ -70,8 +73,8 @@ export abstract class MessageWrapperBase< T,  TInput extends MessageInputBase,  
     return Object.assign({}, this.messageResult) as TResult;
   }
   abstract process(
-    req: Express.Request,
-    res: Express.Response,
+    req: express.Request,
+    res: express.Response,
     serverState: ServerState
   ): void;
 }

@@ -6,6 +6,7 @@ import {
   ISerializerService,
   ApplicationClientsSerializerJsonFileService
 } from '../Services/SerializeService';
+import { ApplicationToken } from './ApplicationToken';
 container.registerSingleton(
   'ISerializerService<ApplicationClient[]>',
   ApplicationClientsSerializerJsonFileService
@@ -40,7 +41,15 @@ export class ApplicationClients {
     this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)
       ? this.validatedApplicationClientCreateResult(name, clientpassword)
       : ApplicationClientCreateResult.Error;
-
+  createToken = (
+    name: string,
+    serverpassword: string,
+    clientpassword: string
+  ): ApplicationToken | undefined =>
+    this.isValidClientCredentialIsValid(name, serverpassword, clientpassword) && !!this.serverTokens
+      ? this.serverTokens.authenticateNewClientToken(name,clientpassword)
+      : undefined;
+      
   private isValidClientCredentialIsValid = (
     name: string,
     serverpassword: string,
