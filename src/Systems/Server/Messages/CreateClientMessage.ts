@@ -7,13 +7,7 @@ import {
 } from './Base/MessageWrapperBase';
 import express = require('express');
 import { ApplicationClientCreateResult } from '../../Application/ApplicationClientCreateResult';
-export enum MessageTypes {
-  CreateClient = 'Create Client',
-  TestMessage = 'Test Message',
-  ErrorMessage = 'Error Message',
-  GetTokenMessage = 'Get Token Message',
-  IamAliveMessage = 'I am alive message'
-}
+import { MessageTypes } from './Base/MessageTypes';
 export class CreateClientMessageInput extends MessageInputBase {
   constructor(
     public name = '',

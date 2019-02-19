@@ -6,7 +6,7 @@ import {
   ErrorMessageResult
 } from './Base/MessageWrapperBase';
 import express = require('express');
-import { MessageTypes } from './CreateClientMessage';
+import { MessageTypes } from "./Base/MessageTypes";
 
 export class GetTokenMessageInput extends MessageInputBase {
   constructor(

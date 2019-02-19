@@ -78,8 +78,8 @@ describe('Application Tokens', function() {
     input.token = serverState.tokens[0];
     req.body = JSON.stringify(input);
     msg.processExpress(req, res);
-    expect(sendResult.sentat).toBeCloseTo(
-      serverState.applicationClients.clients[0].lastAccess
+    expect(sendResult.sentat).toBeLessThan(
+      serverState.applicationClients.clients[0].lastAccess + 5
     );
   });
 });

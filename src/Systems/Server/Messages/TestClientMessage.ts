@@ -1,5 +1,5 @@
 import { MessageInputBase } from './Base/MessageInputBase';
-import { MessageTypes } from './CreateClientMessage';
+import { MessageTypes } from "./Base/MessageTypes";
 import { MessageResultBase } from './Base/MessageResultBase';
 import { MessageWrapperBase } from './Base/MessageWrapperBase';
 import { ServerState } from '../ServerState';

@@ -1,7 +1,7 @@
 import { ServerState } from '../../ServerState';
 import { MessageInputBase } from './MessageInputBase';
 import { MessageResultBase } from './MessageResultBase';
-import { MessageTypes } from '../CreateClientMessage';
+import { MessageTypes } from "./MessageTypes";
 import express = require('express');
 export interface IMessageWrapper {
   process(
