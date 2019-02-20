@@ -30,7 +30,7 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
 > {
   constructor(serverState: ServerState) {
     super(
-      'createclient',
+      MessageTypes.CreateClient,
       new CreateClientMessageInput(),
       new CreateClientMessageResult(),
       serverState,

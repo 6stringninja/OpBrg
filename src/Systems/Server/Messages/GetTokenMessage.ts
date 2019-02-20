@@ -30,7 +30,7 @@ export class GetTokenMessageWrapper extends MessageWrapperBase<
 > {
   constructor(serverState: ServerState) {
     super(
-      'gettoken',
+      MessageTypes.GetTokenMessage,
       new GetTokenMessageInput(),
       new GetTokenMessageResult(),
       serverState,

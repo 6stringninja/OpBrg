@@ -9,26 +9,31 @@ export interface IMessageWrapper {
     res: Express.Response,
     serverState: ServerState
   ): void;
+  express(req: Express.Request, res: Express.Response): void;
   typeOf: MessageTypes;
   name: string;
 }
 export class ErrorMessageResult extends MessageResultBase<string> {
-constructor(msg = '') {
-  super(MessageTypes.ErrorMessage);
-  this.error = msg || this.error;
-  this.success = false;
+  constructor(msg = '') {
+    super(MessageTypes.ErrorMessage);
+    this.error = msg || this.error;
+    this.success = false;
+  }
 }
-}
-export abstract class MessageWrapperBase< T,  TInput extends MessageInputBase,  TResult extends MessageResultBase<T>>
-  implements IMessageWrapper {
+export abstract class MessageWrapperBase<
+  T,
+  TInput extends MessageInputBase,
+  TResult extends MessageResultBase<T>
+> implements IMessageWrapper {
+  express(req: express.Request, res: express.Response): void {
+    this.process(req, res, this.serverState);
+  }
   typeOf: MessageTypes;
   authenticated = false;
   processExpress(req: express.Request, res: express.Response): void {
-
     try {
       this.messageInput = JSON.parse(req.body) as TInput;
       if (!this.validateToken()) {
-
         res.send(new ErrorMessageResult('Invalid Token'));
 
         return;
@@ -40,11 +45,9 @@ export abstract class MessageWrapperBase< T,  TInput extends MessageInputBase,  
       console.log('callprocessExpress errored');
       res.send(new ErrorMessageResult(error));
     }
-
-
   }
   validateToken() {
-   // console.log({ tokens: this.serverState.tokens, token: this.messageInput.token })
+    // console.log({ tokens: this.serverState.tokens, token: this.messageInput.token })
 
     if (!this.secured) return true;
     if (!this.messageInput || !this.messageInput.token) return false;
@@ -57,14 +60,19 @@ export abstract class MessageWrapperBase< T,  TInput extends MessageInputBase,  
     return this.messageResult.success;
   }
   constructor(
-    public name = '',
+    public name: MessageTypes,
     public messageInput: TInput,
     public messageResult: TResult,
     public serverState: ServerState,
     public secured = true
   ) {
     if (!this.name) throw new Error('name required');
-    if (this.messageInput.typeOf !== messageResult.typeOf)
+    if (
+      !(
+        this.messageInput.typeOf == messageResult.typeOf &&
+        this.name === messageInput.typeOf
+      )
+    )
       throw new Error('input and result must match');
     this.typeOf = messageInput.typeOf;
   }

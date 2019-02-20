@@ -23,7 +23,7 @@ class CreateClientMessageResult extends MessageResultBase_1.MessageResultBase {
 exports.CreateClientMessageResult = CreateClientMessageResult;
 class CreateClientMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase {
     constructor(serverState) {
-        super('createclient', new CreateClientMessageInput(), new CreateClientMessageResult(), serverState, false);
+        super(MessageTypes_1.MessageTypes.CreateClient, new CreateClientMessageInput(), new CreateClientMessageResult(), serverState, false);
     }
     process(req, res, serverState) {
         const input = this.messageInput;

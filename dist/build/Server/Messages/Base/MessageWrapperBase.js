@@ -11,7 +11,7 @@ class ErrorMessageResult extends MessageResultBase_1.MessageResultBase {
 }
 exports.ErrorMessageResult = ErrorMessageResult;
 class MessageWrapperBase {
-    constructor(name = '', messageInput, messageResult, serverState, secured = true) {
+    constructor(name, messageInput, messageResult, serverState, secured = true) {
         this.name = name;
         this.messageInput = messageInput;
         this.messageResult = messageResult;
@@ -20,9 +20,13 @@ class MessageWrapperBase {
         this.authenticated = false;
         if (!this.name)
             throw new Error('name required');
-        if (this.messageInput.typeOf !== messageResult.typeOf)
+        if (!(this.messageInput.typeOf == messageResult.typeOf &&
+            this.name === messageInput.typeOf))
             throw new Error('input and result must match');
         this.typeOf = messageInput.typeOf;
+    }
+    express(req, res) {
+        this.process(req, res, this.serverState);
     }
     processExpress(req, res) {
         try {

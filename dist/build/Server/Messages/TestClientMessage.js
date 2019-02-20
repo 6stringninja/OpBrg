@@ -18,7 +18,7 @@ class TestClientMessageResult extends MessageResultBase_1.MessageResultBase {
 exports.TestClientMessageResult = TestClientMessageResult;
 class TestClientMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase {
     constructor(serverState) {
-        super('test', new TestClientMessageInput(), new TestClientMessageResult(), serverState, true);
+        super(MessageTypes_1.MessageTypes.TestMessage, new TestClientMessageInput(), new TestClientMessageResult(), serverState, true);
     }
     process(req, res, serverState) {
     }

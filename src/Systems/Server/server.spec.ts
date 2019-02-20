@@ -113,4 +113,19 @@ describe('server ', () => {
 
     expect(!!(msg.messageResult.error && msg.messageResult.error === 'Invalid Token')).toBeTruthy();
   });
+  it('should generate messages', () => {
+    const test = new Server();
+    test.initMessages();
+    expect(test.serverMessages.length).toBe(3);
+  });
+  it('generate messages names should not have spaces', () => {
+    const test = new Server();
+    test.initMessages();
+    expect(test.serverMessages.some(f => f.name.split(' ').length > 1 )).toBeFalsy();
+  });
+  it('route prefix name should not have /', () => {
+    const test = new Server();
+    test.initMessages();
+    expect(test.serverRoutePrefix.split('/').length === 1).toBeTruthy();
+  });
 });

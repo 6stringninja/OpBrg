@@ -21,7 +21,7 @@ class IamAliveMessageResult extends MessageResultBase_1.MessageResultBase {
 exports.IamAliveMessageResult = IamAliveMessageResult;
 class IamAliveMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase {
     constructor(serverState) {
-        super('iamalive', new IamAliveMessageInput(), new IamAliveMessageResult(), serverState);
+        super(MessageTypes_1.MessageTypes.IamAliveMessage, new IamAliveMessageInput(), new IamAliveMessageResult(), serverState);
     }
     process(req, res, serverState) {
         const input = this.messageInput;

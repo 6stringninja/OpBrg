@@ -8,12 +8,15 @@ import { ServerState } from './ServerState';
 import {
   CreateClientMessageInput,
   CreateClientMessageResult
-} from './Messages/CreateClientMessage.js';
-import { ApplicationClientCreateResult } from '../Application/ApplicationClientCreateResult.js';
-
+} from './Messages/CreateClientMessage';
+import { ApplicationClientCreateResult } from '../Application/ApplicationClientCreateResult';
+import {IMessageWrapper} from './Messages/Base/MessageWrapperBase';
+import { Messages } from './Messages/index';
 export class Server {
   app: express.Application = express();
   serverState: ServerState | undefined;
+  serverMessages: IMessageWrapper[] =[];
+  serverRoutePrefix = 'api';
   constructor(public config: IServerConfig = ServerConfig as IServerConfig) {
     new ServerDi().load(container);
 
@@ -21,9 +24,16 @@ export class Server {
     if (!this.serverState.loadAll())
       throw new Error('failed to load json files');
   }
+  initMessages(){
+    this.serverMessages = Messages(this.serverState);
+    this.serverMessages.forEach(m => {
+      this.app.post(`${this.serverRoutePrefix}/${m.name}`,m.express);
+    });
+    
+  }
   start() {
     this.app.use(express.json());
-
+    this.initMessages();
     this.app.post(
       // SHIT
       '/api/createnew',

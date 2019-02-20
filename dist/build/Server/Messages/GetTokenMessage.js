@@ -22,7 +22,7 @@ class GetTokenMessageResult extends MessageResultBase_1.MessageResultBase {
 exports.GetTokenMessageResult = GetTokenMessageResult;
 class GetTokenMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase {
     constructor(serverState) {
-        super('gettoken', new GetTokenMessageInput(), new GetTokenMessageResult(), serverState, false);
+        super(MessageTypes_1.MessageTypes.GetTokenMessage, new GetTokenMessageInput(), new GetTokenMessageResult(), serverState, false);
     }
     process(req, res, serverState) {
         const input = this.messageInput;

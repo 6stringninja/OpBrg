@@ -26,7 +26,7 @@ export class IamAliveMessageWrapper extends MessageWrapperBase<
 > {
   constructor(serverState: ServerState) {
     super(
-      'iamalive',
+      MessageTypes.IamAliveMessage,
       new IamAliveMessageInput(),
       new IamAliveMessageResult(),
       serverState

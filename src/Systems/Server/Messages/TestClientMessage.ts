@@ -21,7 +21,7 @@ export class TestClientMessageWrapper extends MessageWrapperBase<
 > {
   constructor(serverState: ServerState) {
     super(
-      'test',
+      MessageTypes.TestMessage,
       new TestClientMessageInput(),
       new TestClientMessageResult(),
       serverState,
