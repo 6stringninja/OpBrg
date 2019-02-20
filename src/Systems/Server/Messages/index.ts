@@ -11,5 +11,5 @@ export function Messages(serverState: ServerState | undefined): IMessageWrapper[
         new GetTokenMessageWrapper(serverState),
         new IamAliveMessageWrapper(serverState),
         new TestClientMessageWrapper(serverState),
-    ]: [];
+    ] : [];
 }

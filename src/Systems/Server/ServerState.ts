@@ -99,7 +99,7 @@ export class ServerState {
       token.id &&
       token.issued &&
       token.issued > new Date().getTime();
-    // console.log({isvalid: tokenRequired,token:token,tokens:this.tokens})
+
     tokenRequired =
       tokenRequired &&
       this.tokens.some(

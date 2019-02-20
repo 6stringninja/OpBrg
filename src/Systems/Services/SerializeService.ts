@@ -23,12 +23,12 @@ export abstract class SerializerJsonFileService<T> implements ISerializerService
 
         const result = new SerializerResult<string>();
         result.result = JSON.stringify(itemToSerialize);
-    //  console.log({ path: this.filePath() });
+
        try {
         fs.writeFileSync(this.filePath(), result.result, 'utf8');
         result.success = true;
        } catch (error) {
-         //  console.log(error);
+
            result.success = false;
        }
 

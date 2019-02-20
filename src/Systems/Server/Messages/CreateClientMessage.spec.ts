@@ -3,10 +3,12 @@ import { ApplicationTokensSerializerJsonFileService } from '../../Services/Seria
 import { ServerState } from '../ServerState';
 import { Server } from '../Server';
 import express = require('express');
+import request from 'request';
 import {
   CreateClientMessageWrapper,
   CreateClientMessageInput
 } from './CreateClientMessage';
+import { ApplicationToken } from '../../Application/ApplicationToken';
 
 describe('Application Tokens', function() {
   container.register('ISerializerService<ApplicationToken[]>', {
@@ -18,16 +20,26 @@ describe('Application Tokens', function() {
   let res = {} as express.Response;
   let sendResult: any | undefined;
   let msg: CreateClientMessageWrapper;
+  beforeAll(async (done) => {
+    server = new Server();
+    serverState = server.serverState;
+     server.serverState.resetAll();
+    await  server.start();
+    setTimeout(done, 1);
+  });
+  afterAll(async (done) => {
+    await  server.stop();
+    done();
+  });
   beforeEach( async (done) => {
     req = {} as express.Request;
     res = {} as express.Response;
     res.send = function(b: any) {
-      //      console.log({ "sendresult:": b });
       sendResult = b;
       return b;
     };
-    server = new Server();
-    serverState = server.serverState;
+
+
     serverState.resetAll();
     msg = new CreateClientMessageWrapper(serverState);
   // await server.start();
@@ -107,5 +119,21 @@ describe('Application Tokens', function() {
     msg.processExpress(req, res);
 
     expect(sendResult.token).toBeFalsy();
+  });
+  it('should call CreateClientMessageInput ', async (done) => {
+    const createClientRequest = new CreateClientMessageInput('test', 'test', '1234');
+    createClientRequest.token = ApplicationToken.create();
+    request.post(`http://localhost:${server.config.port}/api/create-client`, {
+      json: createClientRequest
+    }, (error, res, body) => {
+      if (error) {
+        console.error(error);
+        done();
+        return;
+      }
+
+      expect(body.success).toBeTruthy();
+      done();
+    });
   });
 });

@@ -43,7 +43,7 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
     serverState: ServerState
   ): void {
     const input = this.messageInput;
-    console.log({messageInut:input});
+
     if (
       !(input && input.name && input.clientpassword && input.serverpassword)
     ) {
@@ -54,7 +54,7 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
         input.serverpassword,
         input.clientpassword
       );
-      console.log({ createResult: createResult });
+
       this.messageResult.success =
         createResult === ApplicationClientCreateResult.Success;
       if (!this.messageResult.success) {

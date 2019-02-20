@@ -7,6 +7,7 @@ import {
   GetTokenMessageWrapper,
   GetTokenMessageInput
 } from './GetTokenMessage';
+import request = require('request');
 
 describe('Application Tokens', function() {
   container.register('ISerializerService<ApplicationToken[]>', {
@@ -18,16 +19,27 @@ describe('Application Tokens', function() {
   let res = {} as express.Response;
   let sendResult: any | undefined;
   let msg: GetTokenMessageWrapper;
+  beforeAll(async done => {
+    server = new Server();
+    serverState = server.serverState;
+    server.serverState.resetAll();
+    await server.start();
+    setTimeout(done, 1);
+  });
+  afterAll(async done => {
+    await server.stop();
+    done();
+  });
+
   beforeEach(function() {
     req = {} as express.Request;
     res = {} as express.Response;
     res.send = function(b: any) {
-      // console.log({ 'sendresult:': b });
+
       sendResult = b;
       return b;
     };
-    server = new Server();
-    serverState = server.serverState;
+
     serverState.resetAll();
     msg = new GetTokenMessageWrapper(serverState);
     const input = new GetTokenMessageInput();
@@ -72,6 +84,30 @@ describe('Application Tokens', function() {
     req.body = JSON.stringify(input);
     msg.processExpress(req, res);
     expect(sendResult.success).toBeTruthy();
+  });
+  it('should call GetTokenMessageInput ', async done => {
+    const input = new GetTokenMessageInput();
+    input.clientpassword = 'test';
+    input.name = 'test';
+    input.serverpassword = server.config.serverPassword;
+
+    request.post(
+      `http://localhost:${server.config.port}/api/get-token`,
+      {
+        json: input
+      },
+      (error, res, body) => {
+        if (error) {
+          console.error(error);
+          done();
+          return;
+        }
+
+
+        expect(body.success).toBeTruthy();
+        done();
+      }
+    );
   });
   it('should fail with invalid server password', function() {
     const input = new GetTokenMessageInput();

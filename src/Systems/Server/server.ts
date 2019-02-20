@@ -11,13 +11,14 @@ import {
   CreateClientMessageWrapper
 } from './Messages/CreateClientMessage';
 import { ApplicationClientCreateResult } from '../Application/ApplicationClientCreateResult';
-import {IMessageWrapper} from './Messages/Base/MessageWrapperBase';
+import { IMessageWrapper } from './Messages/Base/MessageWrapperBase';
 import { Messages } from './Messages/index';
 export class Server {
   app: express.Application = express();
   serverState: ServerState | undefined;
-  serverMessages: IMessageWrapper[] =[];
+  serverMessages: IMessageWrapper[] = [];
   serverRoutePrefix = 'api';
+  listener: import('http').Server | undefined;
   constructor(public config: IServerConfig = ServerConfig as IServerConfig) {
     new ServerDi().load(container);
 
@@ -26,24 +27,29 @@ export class Server {
       throw new Error('failed to load json files');
   }
   private getApiUrl = (name: string) => `/${this.serverRoutePrefix}/${name}`;
- async initMessages(){
+ async initMessages() {
     this.serverMessages = Messages(this.serverState);
     this.serverMessages.forEach(m => {
-  
+
     this.app.post(this.getApiUrl(m.name), (req: express.Request, res: express.Response) =>
       m.processExpress(req, res));
     });
- 
+
   }
  async start() {
     this.app.use(express.json());
   await this.initMessages();
- 
 
-    this.app.listen(this.config.port, () => {
+
+  this.listener =  this.app.listen(this.config.port, () => {
       console.log(
-        `Example app listening on port http://localhost:${this.config.port}/ !`
+        `OpBorg listening on port http://localhost:${this.config.port}/ !`
       );
     });
+  }
+  async stop() {
+    if (this.listener) {
+      this.listener.close();
+    }
   }
 }

@@ -25,7 +25,6 @@ export class ApplicationToken {
   generateIdentifier = () => this.UidGeneratorService.generateId();
   static create(name = '', id = '', issued = 0) {
     const token = container.resolve(ApplicationToken);
-    // console.log(token);
     token.name = name;
     token.id = id || token.id;
     token.issued = issued;

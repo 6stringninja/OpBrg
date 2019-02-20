@@ -52,7 +52,6 @@ export abstract class MessageWrapperBase<
     }
   }
   validateToken() {
-    // console.log({ tokens: this.serverState.tokens, token: this.messageInput.token })
 
     if (!this.secured) return true;
     if (!this.messageInput || !this.messageInput.token) return false;
