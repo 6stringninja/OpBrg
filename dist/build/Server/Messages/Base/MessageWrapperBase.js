@@ -30,7 +30,12 @@ class MessageWrapperBase {
     }
     processExpress(req, res) {
         try {
-            this.messageInput = JSON.parse(req.body);
+            try {
+                this.messageInput = JSON.parse(req.body);
+            }
+            catch (error) {
+                this.messageInput = req.body;
+            }
             if (!this.validateToken()) {
                 res.send(new ErrorMessageResult('Invalid Token'));
                 return;
@@ -40,6 +45,7 @@ class MessageWrapperBase {
             this.process(req, res, this.serverState);
         }
         catch (error) {
+            console.log(error);
             console.log('callprocessExpress errored');
             res.send(new ErrorMessageResult(error));
         }

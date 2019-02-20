@@ -1,11 +1,33 @@
 import { Server } from '../Server';
 import { Messages } from '../Messages/index';
-
+import request from 'request';
+import { CreateClientMessageInput } from './CreateClientMessage';
+import { ApplicationToken } from '../../Application/ApplicationToken';
 describe('Messages array', function() {
-  it('should create array', function() {
-    const server = new Server();
-    const test = Messages(server.serverState);
+  server:Server;
+  beforeAll( async (done )=>{
+    this.server = new Server();
+    this.server.serverState.resetAll();
+    await this.server.start();
+    setTimeout(done,1);
+  });
 
-    expect(test.length).toBe(3);
+  it('should create array', async (done) => {
+    const createClientRequest = new CreateClientMessageInput('test','test','1234');
+createClientRequest.token = ApplicationToken.create();
+    request.post(`http://localhost:${this.server.config.port}/api/create-client`, {
+      json:  createClientRequest
+    }, (error, res, body) => {
+      if (error) {
+        console.error(error)
+        done();
+        return;
+      }
+      console.log(`statusCode: ${res.statusCode}`)
+      console.log(body)
+      done();
+    });
+    const test = Messages(this.server.serverState);
+    expect(test.length).toBe(4);
   });
 });

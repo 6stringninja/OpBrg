@@ -27,11 +27,13 @@ class CreateClientMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase
     }
     process(req, res, serverState) {
         const input = this.messageInput;
+        console.log({ messageInut: input });
         if (!(input && input.name && input.clientpassword && input.serverpassword)) {
             res.send(new MessageWrapperBase_1.ErrorMessageResult('invalid input'));
         }
         else {
             const createResult = serverState.applicationClients.createClient(input.name, input.serverpassword, input.clientpassword);
+            console.log({ createResult: createResult });
             this.messageResult.success =
                 createResult === ApplicationClientCreateResult_1.ApplicationClientCreateResult.Success;
             if (!this.messageResult.success) {

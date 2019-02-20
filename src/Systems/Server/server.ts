@@ -7,7 +7,8 @@ import { ServerDi } from './ServerDi';
 import { ServerState } from './ServerState';
 import {
   CreateClientMessageInput,
-  CreateClientMessageResult
+  CreateClientMessageResult,
+  CreateClientMessageWrapper
 } from './Messages/CreateClientMessage';
 import { ApplicationClientCreateResult } from '../Application/ApplicationClientCreateResult';
 import {IMessageWrapper} from './Messages/Base/MessageWrapperBase';
@@ -24,38 +25,20 @@ export class Server {
     if (!this.serverState.loadAll())
       throw new Error('failed to load json files');
   }
-  initMessages(){
+  private getApiUrl = (name: string) => `/${this.serverRoutePrefix}/${name}`;
+ async initMessages(){
     this.serverMessages = Messages(this.serverState);
     this.serverMessages.forEach(m => {
-      this.app.post(`${this.serverRoutePrefix}/${m.name}`,m.express);
+  
+    this.app.post(this.getApiUrl(m.name), (req: express.Request, res: express.Response) =>
+      m.processExpress(req, res));
     });
-    
+ 
   }
-  start() {
+ async start() {
     this.app.use(express.json());
-    this.initMessages();
-    this.app.post(
-      // SHIT
-      '/api/createnew',
-      (req: express.Request, res: express.Response) => {
-        const param = req.body as CreateClientMessageInput;
-        //  console.log(req.body);
-        const retrn = new CreateClientMessageResult();
-        if (!!param && this.serverState) {
-          const result = this.serverState.applicationClients.createClient(
-            param.name,
-            param.serverpassword,
-            param.clientpassword
-          );
-          //    console.log(result);
-
-          retrn.success = result === ApplicationClientCreateResult.Success;
-          retrn.error = retrn.success ? undefined : result.toString();
-        }
-
-        res.send(retrn);
-      }
-    );
+  await this.initMessages();
+ 
 
     this.app.listen(this.config.port, () => {
       console.log(

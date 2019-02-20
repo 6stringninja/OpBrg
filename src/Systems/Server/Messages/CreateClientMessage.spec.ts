@@ -18,7 +18,7 @@ describe('Application Tokens', function() {
   let res = {} as express.Response;
   let sendResult: any | undefined;
   let msg: CreateClientMessageWrapper;
-  beforeEach(function() {
+  beforeEach( async (done) => {
     req = {} as express.Request;
     res = {} as express.Response;
     res.send = function(b: any) {
@@ -30,6 +30,8 @@ describe('Application Tokens', function() {
     serverState = server.serverState;
     serverState.resetAll();
     msg = new CreateClientMessageWrapper(serverState);
+  // await server.start();
+   done();
   });
 
   beforeAll(function() {});

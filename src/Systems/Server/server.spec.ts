@@ -116,7 +116,7 @@ describe('server ', () => {
   it('should generate messages', () => {
     const test = new Server();
     test.initMessages();
-    expect(test.serverMessages.length).toBe(3);
+    expect(test.serverMessages.length).toBe(4);
   });
   it('generate messages names should not have spaces', () => {
     const test = new Server();

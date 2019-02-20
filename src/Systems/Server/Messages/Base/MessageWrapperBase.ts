@@ -9,7 +9,7 @@ export interface IMessageWrapper {
     res: Express.Response,
     serverState: ServerState
   ): void;
-  express(req: Express.Request, res: Express.Response): void;
+  processExpress(req: Express.Request, res: Express.Response): void;
   typeOf: MessageTypes;
   name: string;
 }
@@ -32,7 +32,11 @@ export abstract class MessageWrapperBase<
   authenticated = false;
   processExpress(req: express.Request, res: express.Response): void {
     try {
-      this.messageInput = JSON.parse(req.body) as TInput;
+      try {
+        this.messageInput = JSON.parse(req.body) as TInput;
+      } catch (error) {
+        this.messageInput = req.body as TInput;
+      }
       if (!this.validateToken()) {
         res.send(new ErrorMessageResult('Invalid Token'));
 
@@ -42,6 +46,7 @@ export abstract class MessageWrapperBase<
       this.serverState.addOrUpdateToken(this.messageResult.token);
       this.process(req, res, this.serverState);
     } catch (error) {
+      console.log(error);
       console.log('callprocessExpress errored');
       res.send(new ErrorMessageResult(error));
     }
