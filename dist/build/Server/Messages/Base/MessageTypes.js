@@ -8,3 +8,13 @@ var MessageTypes;
     MessageTypes["GetTokenMessage"] = "get-token";
     MessageTypes["IamAliveMessage"] = "i-am-alive";
 })(MessageTypes = exports.MessageTypes || (exports.MessageTypes = {}));
+function MessageTypesArray() {
+    const map = [];
+    for (const n in MessageTypes) {
+        if (typeof MessageTypes[n] === 'string') {
+            map.push({ id: MessageTypes[n], name: n });
+        }
+    }
+    return map;
+}
+exports.MessageTypesArray = MessageTypesArray;

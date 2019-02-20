@@ -31,9 +31,14 @@ class Server {
     async start() {
         this.app.use(express.json());
         await this.initMessages();
-        this.app.listen(this.config.port, () => {
-            console.log(`Example app listening on port http://localhost:${this.config.port}/ !`);
+        this.listener = this.app.listen(this.config.port, () => {
+            console.log(`OpBorg listening on port http://localhost:${this.config.port}/ !`);
         });
+    }
+    async stop() {
+        if (this.listener) {
+            this.listener.close();
+        }
     }
 }
 exports.Server = Server;
