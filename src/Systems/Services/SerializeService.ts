@@ -3,6 +3,7 @@ import { singleton } from 'tsyringe';
 import fs from 'fs';
 import { ApplicationToken } from '../Application/ApplicationToken';
 import { ClientStateData } from '../Client/ClientStateData';
+import { RSA_NO_PADDING } from 'constants';
 
 export class SerializerResult<T> {
     success = false;
@@ -36,7 +37,17 @@ export abstract class SerializerJsonFileService<T> implements ISerializerService
         return result;
 
     }
-    filePath = () => `${__dirname}\\${this.filename}`;
+    filePath = () =>{
+    let dirname  = __dirname;
+        const dirs = dirname.split('\\');
+        if(dirs.length>1){
+            dirs[dirs.length-1] = 'Data';
+            dirname = dirs.join('\\');
+            if (!fs.existsSync(dirname)) fs.mkdirSync(dirname);
+        }
+        
+        return `${dirname}\\${this.filename}`;
+    } 
     deserialize(): SerializerResult<T> {
 
 

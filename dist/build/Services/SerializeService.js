@@ -23,7 +23,15 @@ exports.SerializerResult = SerializerResult;
 class SerializerJsonFileService {
     constructor(filename = '') {
         this.filename = filename;
-        this.filePath = () => `${__dirname}\\${this.filename}`;
+        this.filePath = () => {
+            let dirname = __dirname;
+            const dirs = dirname.split('\\');
+            if (dirs.length > 1) {
+                dirs[dirs.length - 1] = 'Data';
+            }
+            dirname = dirs.join('\\');
+            return `${dirname}\\${this.filename}`;
+        };
     }
     serialize(itemToSerialize) {
         const result = new SerializerResult();

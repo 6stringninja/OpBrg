@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import express = require('express');
-import ServerConfig from './ServerConfig.json';
+import ServerConfig from '../Config/ServerConfig.json';
 import { IServerConfig } from './ServerConfig';
 import { container } from 'tsyringe';
 import { ServerDi } from './ServerDi';
