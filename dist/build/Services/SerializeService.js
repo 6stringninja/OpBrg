@@ -28,8 +28,10 @@ class SerializerJsonFileService {
             const dirs = dirname.split('\\');
             if (dirs.length > 1) {
                 dirs[dirs.length - 1] = 'Data';
+                dirname = dirs.join('\\');
+                if (!fs_1.default.existsSync(dirname))
+                    fs_1.default.mkdirSync(dirname);
             }
-            dirname = dirs.join('\\');
             return `${dirname}\\${this.filename}`;
         };
     }

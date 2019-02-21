@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const express = require("express");
-const ServerConfig_json_1 = __importDefault(require("./ServerConfig.json"));
+const ServerConfig_json_1 = __importDefault(require("../Config/ServerConfig.json"));
 const tsyringe_1 = require("tsyringe");
 const ServerDi_1 = require("./ServerDi");
 const ServerState_1 = require("./ServerState");
