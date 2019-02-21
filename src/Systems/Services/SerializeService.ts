@@ -2,6 +2,7 @@ import { ApplicationClient } from '../Application/ApplicationClient';
 import { singleton } from 'tsyringe';
 import fs from 'fs';
 import { ApplicationToken } from '../Application/ApplicationToken';
+import { ClientStateData } from '../Client/ClientStateData';
 
 export class SerializerResult<T> {
     success = false;
@@ -62,4 +63,9 @@ export class ApplicationClientsSerializerJsonFileService extends SerializerJsonF
 @singleton()
 export class ApplicationTokensSerializerJsonFileService extends SerializerJsonFileService<ApplicationToken[]> {
     constructor() { super('applicationTokens.json'); }
+}
+
+@singleton()
+export class ClientStateDataSerializerJsonFileService extends SerializerJsonFileService<ClientStateData> {
+    constructor() { super('clientStateData.json'); }
 }

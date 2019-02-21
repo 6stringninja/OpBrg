@@ -69,3 +69,11 @@ ApplicationTokensSerializerJsonFileService = __decorate([
     __metadata("design:paramtypes", [])
 ], ApplicationTokensSerializerJsonFileService);
 exports.ApplicationTokensSerializerJsonFileService = ApplicationTokensSerializerJsonFileService;
+let ClientStateDataSerializerJsonFileService = class ClientStateDataSerializerJsonFileService extends SerializerJsonFileService {
+    constructor() { super('clientStateData.json'); }
+};
+ClientStateDataSerializerJsonFileService = __decorate([
+    tsyringe_1.singleton(),
+    __metadata("design:paramtypes", [])
+], ClientStateDataSerializerJsonFileService);
+exports.ClientStateDataSerializerJsonFileService = ClientStateDataSerializerJsonFileService;
