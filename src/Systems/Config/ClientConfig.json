@@ -1,7 +1,7 @@
 {
-    "serverPassword": "123",
+    "serverPassword": "1234",
     "clientPassword": "test",
-    "name": "",
+    "name": "test-client",
     "server": "localhost",
     "port": 3001
 }
