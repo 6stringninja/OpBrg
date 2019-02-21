@@ -17,7 +17,7 @@ export class GetTokenMessageInput extends MessageInputBase {
     super(MessageTypes.GetTokenMessage);
   }
 }
-export class GetTokenMessageResult extends MessageResultBase<string> {
+export class GetTokenMessageResult extends MessageResultBase  {
   constructor(success = false) {
     super(MessageTypes.GetTokenMessage);
     this.success = success;

@@ -13,7 +13,7 @@ export class IamAliveMessageInput extends MessageInputBase {
     super(MessageTypes.IamAliveMessage);
   }
 }
-export class IamAliveMessageResult extends MessageResultBase<string> {
+export class IamAliveMessageResult extends MessageResultBase  {
   constructor(success = false, public sentat = new Date().getTime()) {
     super(MessageTypes.IamAliveMessage);
     this.success = success;

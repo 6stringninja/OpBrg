@@ -13,7 +13,7 @@ export interface IMessageWrapper {
   typeOf: MessageTypes;
   name: string;
 }
-export class ErrorMessageResult extends MessageResultBase<string> {
+export class ErrorMessageResult extends MessageResultBase  {
   constructor(msg = '') {
     super(MessageTypes.ErrorMessage);
     this.error = msg || this.error;
@@ -23,7 +23,7 @@ export class ErrorMessageResult extends MessageResultBase<string> {
 export abstract class MessageWrapperBase<
   T,
   TInput extends MessageInputBase,
-  TResult extends MessageResultBase<T>
+  TResult extends MessageResultBase
 > implements IMessageWrapper {
   express(req: express.Request, res: express.Response): void {
     this.process(req, res, this.serverState);

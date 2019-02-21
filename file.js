@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-const path = __dirname + '\\src\\';
+const path = __dirname + '\\src\\Systems\\';
 
 if (fs.existsSync(path)) {
 
@@ -47,7 +47,7 @@ if (fs.existsSync(path)) {
                     if (deleteProc && fs.existsSync(pathtofile)) {
                         fs.unlinkSync(pathtofile);
                         console.log(`deleted file: ${pathtofile}`);
-                    } else console.warn(`file: ${file} already ${(deleteProc ? 'deleted' : 'exists')} `);
+                    } else console.warn(`file: ${file} ${(deleteProc ? 'does not exist' : 'already exists')} `);
                 }
 
             const pathToFileSpec = pathtofile.replace('.ts', '.spec.ts');
@@ -59,7 +59,7 @@ if (fs.existsSync(path)) {
                     if (deleteProc && fs.existsSync(pathToFileSpec)) {
                         fs.unlinkSync(pathToFileSpec);
                         console.log(`deleted file: ${pathToFileSpec}`);
-                    } else console.warn(`file: ${file.replace('.ts', '.spec.ts')} already ${(deleteProc ? 'deleted' : 'exists')} `);
+                    } else console.warn(`file: ${file.replace('.ts', '.spec.ts')} ${(deleteProc ? 'does not exist' : 'already exists')}  `);
                 }
 
 

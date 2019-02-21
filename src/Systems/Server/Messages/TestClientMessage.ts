@@ -9,7 +9,7 @@ export class TestClientMessageInput extends MessageInputBase {
     super(MessageTypes.TestMessage);
   }
 }
-export class TestClientMessageResult extends MessageResultBase<string> {
+export class TestClientMessageResult extends MessageResultBase {
   constructor() {
     super(MessageTypes.TestMessage);
   }
@@ -25,7 +25,7 @@ export class TestClientMessageWrapper extends MessageWrapperBase<
       new TestClientMessageInput(),
       new TestClientMessageResult(),
       serverState,
-      true
+      false
     );
   }
   process(

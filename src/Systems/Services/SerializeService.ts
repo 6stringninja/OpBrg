@@ -37,17 +37,17 @@ export abstract class SerializerJsonFileService<T> implements ISerializerService
         return result;
 
     }
-    filePath = () =>{
+    filePath = () => {
     let dirname  = __dirname;
         const dirs = dirname.split('\\');
-        if(dirs.length>1){
-            dirs[dirs.length-1] = 'Data';
+        if (dirs.length > 1) {
+            dirs[dirs.length - 1] = 'Data';
             dirname = dirs.join('\\');
             if (!fs.existsSync(dirname)) fs.mkdirSync(dirname);
         }
-        
+
         return `${dirname}\\${this.filename}`;
-    } 
+    }
     deserialize(): SerializerResult<T> {
 
 

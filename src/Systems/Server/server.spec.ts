@@ -111,7 +111,7 @@ describe('server ', () => {
 
     msg.processExpress(req, res);
 
-    expect(!!(msg.messageResult.error && msg.messageResult.error === 'Invalid Token')).toBeTruthy();
+    expect(!(msg.messageResult.error && msg.messageResult.error == 'Invalid Token')).toBeTruthy();
   });
   it('should generate messages', () => {
     const test = new Server();

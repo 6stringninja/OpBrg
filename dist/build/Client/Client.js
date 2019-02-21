@@ -30,5 +30,13 @@ class Client {
             this.clientState.writeStateData();
         }
     }
+    updatetoken(result) {
+        if (result.authenticated) {
+            if (this.clientState && this.clientState.stateData) {
+                this.clientState.stateData.token = result.messageResult.token;
+                this.clientState.writeStateData();
+            }
+        }
+    }
 }
 exports.Client = Client;

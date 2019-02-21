@@ -42,12 +42,12 @@ describe('Client', function() {
 
     });
   it('should not reset token', function () {
-   
+
     const ignorethistokenname = 'ignorethistokenname';
- 
+
     const token = ApplicationTokenHelper.createToken(ignorethistokenname);
     token.issued = 2;
-    token.id='id';
+    token.id = 'id';
     client.clientState.stateData.token = token;
     client.clientState.writeStateData();
     client = new Client();

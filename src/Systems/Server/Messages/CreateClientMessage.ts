@@ -17,7 +17,7 @@ export class CreateClientMessageInput extends MessageInputBase {
     super(MessageTypes.CreateClient);
   }
 }
-export class CreateClientMessageResult extends MessageResultBase<string> {
+export class CreateClientMessageResult extends MessageResultBase  {
   constructor(success = false) {
     super(MessageTypes.CreateClient);
     this.success = success;
