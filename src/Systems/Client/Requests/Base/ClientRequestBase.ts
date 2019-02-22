@@ -4,7 +4,6 @@ import {
 } from '../../../Server/Messages/Base/MessageResultBase';
 import { MessageInputBase } from '../../../Server/Messages/Base/MessageInputBase';
 import { MessageTypes } from '../../../Server/Messages/Base/MessageTypes';
-import { ClientState } from '../../ClientState';
 import { Client } from '../../Client';
 import request = require('request');
 import { ErrorMessageResult } from '../../../Server/Messages/Base/MessageWrapperBase';
@@ -45,7 +44,7 @@ export abstract class ClientRequestBase<
       try {
         request.post(options, (error, resp, body) => {
           if (error) {
-            console.error(error);
+
             this.messageResult.success = false;
             this.messageResult.error = error.toString();
             rtrn = this.messageResult;

@@ -7,6 +7,8 @@ const MessageWrapperBase_1 = require("./Base/MessageWrapperBase");
 class TestClientMessageInput extends MessageInputBase_1.MessageInputBase {
     constructor() {
         super(MessageTypes_1.MessageTypes.TestMessage);
+        this.fail = false;
+        this.throw = false;
     }
 }
 exports.TestClientMessageInput = TestClientMessageInput;
@@ -21,7 +23,10 @@ class TestClientMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase {
         super(MessageTypes_1.MessageTypes.TestMessage, new TestClientMessageInput(), new TestClientMessageResult(), serverState, false);
     }
     process(req, res, serverState) {
-        this.messageResult.success = true;
+        if (this.messageInput.throw) {
+            throw new Error('throw=true');
+        }
+        this.messageResult.success = !this.messageInput.fail;
         res.send(this.messageResult);
     }
 }

@@ -6,6 +6,8 @@ import { ServerState } from '../ServerState';
 import express = require('express');
 
 export class TestClientMessageInput extends MessageInputBase {
+  fail = false;
+  throw = false;
   constructor() {
     super(MessageTypes.TestMessage);
   }
@@ -34,8 +36,10 @@ export class TestClientMessageWrapper extends MessageWrapperBase<
     res: express.Response,
     serverState: ServerState
   ): void {
-
-    this.messageResult.success = true;
+if (this.messageInput.throw) {
+  throw new Error('throw=true');
+}
+    this.messageResult.success = !this.messageInput.fail;
     res.send(this.messageResult);
    // throw new Error('Method not implemented.');
   }

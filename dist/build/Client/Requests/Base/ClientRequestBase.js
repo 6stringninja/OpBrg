@@ -31,7 +31,6 @@ class ClientRequestBase {
             try {
                 request.post(options, (error, resp, body) => {
                     if (error) {
-                        console.error(error);
                         this.messageResult.success = false;
                         this.messageResult.error = error.toString();
                         rtrn = this.messageResult;
