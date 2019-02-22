@@ -1,15 +1,16 @@
 import { Client } from '../Client';
-import { GetTokenRequest } from './GetTokenRequest';
+import { IamAliveRequest } from './IamAliveRequest';
 import { container } from 'tsyringe';
 import { ApplicationTokensSerializerJsonFileService } from '../../Services/SerializeService';
 import { Server } from '../../Server/Server';
 import { ServerState } from '../../Server/ServerState';
 import express = require('express');
 import { IMessageResultBase } from '../../Server/Messages/Base/MessageResultBase';
-import { GetTokenMessageInput } from '../../Server/Messages/GetTokenMessage';
-describe('Get Token Client Request', function () {
+import { GetTokenMessageResult, GetTokenMessageInput } from '../../Server/Messages/GetTokenMessage';
+import { CreateClientMessageResult, CreateClientMessageInput } from '../../Server/Messages/CreateClientMessage';
+describe('Create Client Request', function () {
     let client: Client;
-    let test: GetTokenRequest;
+    let test: IamAliveRequest;
     container.register('ISerializerService<ApplicationToken[]>', {
         useClass: ApplicationTokensSerializerJsonFileService
     });
@@ -31,9 +32,9 @@ describe('Get Token Client Request', function () {
         done();
     });
 
-    beforeEach(() => {
+    beforeEach(async (done) => {
         client = new Client();
-        test = new GetTokenRequest(client);
+        test = new IamAliveRequest(client);
         req = {} as express.Request;
         res = {} as express.Response;
         res.send = function (b: any) {
@@ -50,34 +51,29 @@ describe('Get Token Client Request', function () {
         };
 
         serverState.resetAll();
-       // msg = new GetTokenMessageWrapper(serverState);
-        const input = new GetTokenMessageInput();
-        input.clientpassword = 'test';
-        input.name = 'test';
-        input.serverpassword = server.config.serverPassword;
         serverState.applicationClients.createClient(
-            input.name,
-            input.serverpassword,
-            input.clientpassword
+            'test',
+            server.config.serverPassword,
+            'test'
         );
+        serverState.applicationClients.createToken(
+            'test',
+            server.config.serverPassword,
+            'test'
+        );
+        done();
+
     });
 
-    it('should post test message', async function (done) {
-        test.messageInput.clientpassword = 'test';
-        test.messageInput.name = 'test';
-        test.messageInput.serverpassword = server.config.serverPassword;
+
+    it('should succeed with valid input', async function (done) {
+
+        test.messageInput.token = serverState.tokens[0];
+
+
         const t = await test.post();
 
         expect((t as IMessageResultBase).success).toBeTruthy();
-        done();
-    });
-    it('should post test message with error', async function (done) {
-        test.messageInput.clientpassword = 'test2';
-        test.messageInput.name = 'test';
-        test.messageInput.serverpassword = server.config.serverPassword;
-        const t = await test.post();
-
-        expect((t as IMessageResultBase).error).toBe('error');
         done();
     });
 });

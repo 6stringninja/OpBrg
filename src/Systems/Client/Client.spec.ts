@@ -33,13 +33,14 @@ describe('Client', function() {
         const ignorethisname = 'ignorethisname';
         const ignorethispw = 'ignorethispassword';
         const ignorethistokenname = 'ignorethistokenname';
+        if (client.clientState.stateData.client.name) {
         client.clientState.stateData.client.name = ignorethisname;
         client.clientState.stateData.client.password = ignorethispw;
         client.clientState.stateData.token.name = ignorethistokenname;
         client.clientState.writeStateData();
         client.reset();
         expect(client.clientState.stateData.client.name).toBe('test-client');
-        expect(client.clientState.stateData.client.password).toBe('test');
+        expect(client.clientState.stateData.client.password).toBe('test');}
         done();
       }, 20);
 
