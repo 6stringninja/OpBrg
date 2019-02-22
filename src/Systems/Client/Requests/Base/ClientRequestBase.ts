@@ -33,36 +33,47 @@ export abstract class ClientRequestBase<
   public get apiUrl() {
     return this.getApiUrl(this.routeName);
   }
-  public async post() {
-    let rtrn: ErrorMessageResult | TResult = this.messageResult;
 
-    await request.post(
-      this.apiUrl,
-      {
-        json: this.messageInput
-      },
-      (error, res, body) => {
-        if (error) {
-          console.error(error);
-          this.messageResult.success = false;
-          this.messageResult.error = error.toString();
-          rtrn = this.messageResult;
-        } else {
-          try {
-            rtrn = body as TResult;
-            this.client.updatetoken(this);
-          } catch (error) {
+  post(): Promise<IMessageResultBase> {
+    const options = {
+      url: this.apiUrl,
+      method: 'POST',
+      json: this.messageInput
+    };
+    return new Promise((resolve, reject) => {
+      let rtrn: IMessageResultBase = this.messageResult;
+      try {
+        request.post(options, (error, resp, body) => {
+          if (error) {
+            console.error(error);
+            this.messageResult.success = false;
+            this.messageResult.error = error.toString();
+            rtrn = this.messageResult;
             rtrn = new ErrorMessageResult(error.toString());
+            resolve(rtrn);
+          } else {
+            try {
+              rtrn = body as TResult;
+              this.client.updatetoken(this);
+            } catch (error) {
+              rtrn = new ErrorMessageResult(error.toString());
+            }
+
+            resolve(rtrn);
           }
-        }
+        });
+      } catch (error) {
+        rtrn = new ErrorMessageResult(error.toString());
+        resolve(rtrn);
       }
-    );
-    return this.messageResult;
+
+    });
   }
+
   private getUrlPortPart = () =>
     this.client.config.port === 80
       ? ''
       : `:${this.client.config.port.toString()}`;
   private getApiUrl = (name: string) =>
-    `http://${this.client.config.server}${this.getUrlPortPart()}/${name}`;
+    `http://${this.client.config.server}${this.getUrlPortPart()}/api/${name}`;
 }

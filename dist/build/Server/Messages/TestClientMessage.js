@@ -21,6 +21,8 @@ class TestClientMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase {
         super(MessageTypes_1.MessageTypes.TestMessage, new TestClientMessageInput(), new TestClientMessageResult(), serverState, false);
     }
     process(req, res, serverState) {
+        this.messageResult.success = true;
+        res.send(this.messageResult);
     }
 }
 exports.TestClientMessageWrapper = TestClientMessageWrapper;

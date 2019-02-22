@@ -11,7 +11,7 @@ class ClientRequestBase {
         this.getUrlPortPart = () => this.client.config.port === 80
             ? ''
             : `:${this.client.config.port.toString()}`;
-        this.getApiUrl = (name) => `http://${this.client.config.server}${this.getUrlPortPart()}/${name}`;
+        this.getApiUrl = (name) => `http://${this.client.config.server}${this.getUrlPortPart()}/api/${name}`;
         if (this.messageInput.typeOf !== messageResult.typeOf)
             throw new Error('ClientRequestBase typeOf does not match');
         this.typeOf = this.messageInput.typeOf;
@@ -20,28 +20,41 @@ class ClientRequestBase {
     get apiUrl() {
         return this.getApiUrl(this.routeName);
     }
-    async post() {
-        let rtrn = this.messageResult;
-        await request.post(this.apiUrl, {
+    post() {
+        const options = {
+            url: this.apiUrl,
+            method: 'POST',
             json: this.messageInput
-        }, (error, res, body) => {
-            if (error) {
-                console.error(error);
-                this.messageResult.success = false;
-                this.messageResult.error = error.toString();
-                rtrn = this.messageResult;
+        };
+        return new Promise((resolve, reject) => {
+            let rtrn = this.messageResult;
+            try {
+                request.post(options, (error, resp, body) => {
+                    if (error) {
+                        console.error(error);
+                        this.messageResult.success = false;
+                        this.messageResult.error = error.toString();
+                        rtrn = this.messageResult;
+                        rtrn = new MessageWrapperBase_1.ErrorMessageResult(error.toString());
+                        resolve(rtrn);
+                    }
+                    else {
+                        try {
+                            rtrn = body;
+                            this.client.updatetoken(this);
+                        }
+                        catch (error) {
+                            rtrn = new MessageWrapperBase_1.ErrorMessageResult(error.toString());
+                        }
+                        resolve(rtrn);
+                    }
+                });
             }
-            else {
-                try {
-                    rtrn = body;
-                    this.client.updatetoken(this);
-                }
-                catch (error) {
-                    rtrn = new MessageWrapperBase_1.ErrorMessageResult(error.toString());
-                }
+            catch (error) {
+                rtrn = new MessageWrapperBase_1.ErrorMessageResult(error.toString());
+                resolve(rtrn);
             }
         });
-        return this.messageResult;
     }
 }
 exports.ClientRequestBase = ClientRequestBase;

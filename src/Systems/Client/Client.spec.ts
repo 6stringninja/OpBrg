@@ -28,7 +28,8 @@ describe('Client', function() {
     expect(client.clientState.stateData.client.password).toBe('test');
 
   });
-    it('should reset', function () {
+    it('should reset', async function (done) {
+      setTimeout(() => {
         const ignorethisname = 'ignorethisname';
         const ignorethispw = 'ignorethispassword';
         const ignorethistokenname = 'ignorethistokenname';
@@ -39,6 +40,9 @@ describe('Client', function() {
         client.reset();
         expect(client.clientState.stateData.client.name).toBe('test-client');
         expect(client.clientState.stateData.client.password).toBe('test');
+        done();
+      }, 20);
+
 
     });
   it('should not reset token', function () {

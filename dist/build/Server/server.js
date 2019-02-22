@@ -30,6 +30,10 @@ class Server {
     }
     async start() {
         this.app.use(express.json());
+        const myLogger = (req, res, next) => {
+            next();
+        };
+        this.app.use(myLogger);
         await this.initMessages();
         this.listener = this.app.listen(this.config.port, () => {
             console.log(`OpBorg listening on port http://localhost:${this.config.port}/ !`);

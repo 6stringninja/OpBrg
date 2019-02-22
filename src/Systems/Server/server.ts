@@ -26,6 +26,7 @@ export class Server {
   async initMessages() {
     this.serverMessages = Messages(this.serverState);
     this.serverMessages.forEach(m => {
+
       this.app.post(
         this.getApiUrl(m.name),
         (req: express.Request, res: express.Response) =>
@@ -36,6 +37,14 @@ export class Server {
 
   async start() {
     this.app.use(express.json());
+    const myLogger =   (req: express.Request, res: any, next: any) => {
+     // ad.log('LOGGED');
+     // condfdsole.log(req.body);
+      next();
+    };
+
+    this.app.use(myLogger);
+
     await this.initMessages();
     this.listener = this.app.listen(this.config.port, () => {
       console.log(

@@ -8,6 +8,7 @@ import {
   IamAliveMessageInput
 } from './IamAlliveMessage';
 import request = require('request');
+import { IMessageResultBase } from './Base/MessageResultBase';
 describe('Application Tokens', function() {
   container.register('ISerializerService<ApplicationToken[]>', {
     useClass: ApplicationTokensSerializerJsonFileService
@@ -23,13 +24,15 @@ describe('Application Tokens', function() {
     serverState = server.serverState;
     server.serverState.resetAll();
     await server.start();
+
     setTimeout(done, 1);
   });
   afterAll(async done => {
     await server.stop();
     done();
+
   });
-  beforeEach(function() {
+  beforeEach( async (done) => {
     req = {} as express.Request;
     res = {} as express.Response;
     res.send = function(b: any) {
@@ -51,9 +54,11 @@ describe('Application Tokens', function() {
       server.config.serverPassword,
       'test'
     );
+    done();
+
   });
 
-  beforeAll(function() {});
+
 
   it('should authenticate as it is not secure', function() {
     const input = new IamAliveMessageInput();
@@ -95,6 +100,41 @@ describe('Application Tokens', function() {
         done();
       }
     );
+  });
+  it('should work', async done => {
+    const t  = new Promise<IMessageResultBase>((resolve, reject) => {
+      const input = new IamAliveMessageInput();
+      input.token = serverState.tokens[0];
+
+      request.post(
+        `http://localhost:${server.config.port}/api/i-am-alive`,
+        {
+          json: input
+        },
+        (error, res, body) => {
+          if (error) {
+            console.error(error);
+            done();
+            reject(error);
+
+          }
+          else {
+            resolve(body);
+          }
+
+        }
+      );
+
+     /* setTimeout(() => {
+        resolve('success');
+      }, 200);*/
+    });
+    const r = await t.then((s) => {
+
+      done();
+    }
+     );
+
   });
   it('should succeed setat result ? sentat input', function() {
     const input = new IamAliveMessageInput();
