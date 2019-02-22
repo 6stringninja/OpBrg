@@ -35,7 +35,6 @@ describe('Application Tokens', function() {
     req = {} as express.Request;
     res = {} as express.Response;
     res.send = function(b: any) {
-
       sendResult = b;
       return b;
     };
@@ -102,7 +101,6 @@ describe('Application Tokens', function() {
           done();
           return;
         }
-
 
         expect(body.success).toBeTruthy();
         done();

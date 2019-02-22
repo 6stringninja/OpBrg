@@ -11,7 +11,6 @@ describe('Client', function() {
   });
   it('should be define clientState', function() {
     expect(client.clientState).toBeDefined();
-
   });
   it('should be define clientState with name & pw', function() {
     expect(client.clientState.stateData.client.name).toBe('test-client');
@@ -26,28 +25,25 @@ describe('Client', function() {
     client = new Client();
     expect(client.clientState.stateData.client.name).toBe('test-client');
     expect(client.clientState.stateData.client.password).toBe('test');
-
   });
-    it('should reset', async function (done) {
-      setTimeout(() => {
-        const ignorethisname = 'ignorethisname';
-        const ignorethispw = 'ignorethispassword';
-        const ignorethistokenname = 'ignorethistokenname';
-        if (client.clientState.stateData.client.name) {
+  it('should reset', async function(done) {
+    setTimeout(() => {
+      const ignorethisname = 'ignorethisname';
+      const ignorethispw = 'ignorethispassword';
+      const ignorethistokenname = 'ignorethistokenname';
+      if (client.clientState.stateData.client.name) {
         client.clientState.stateData.client.name = ignorethisname;
         client.clientState.stateData.client.password = ignorethispw;
         client.clientState.stateData.token.name = ignorethistokenname;
         client.clientState.writeStateData();
         client.reset();
         expect(client.clientState.stateData.client.name).toBe('test-client');
-        expect(client.clientState.stateData.client.password).toBe('test');}
-        done();
-      }, 20);
-
-
-    });
-  it('should not reset token', function () {
-
+        expect(client.clientState.stateData.client.password).toBe('test');
+      }
+      done();
+    }, 20);
+  });
+  it('should not reset token', function() {
     const ignorethistokenname = 'ignorethistokenname';
 
     const token = ApplicationTokenHelper.createToken(ignorethistokenname);

@@ -36,11 +36,11 @@ export class TestClientMessageWrapper extends MessageWrapperBase<
     res: express.Response,
     serverState: ServerState
   ): void {
-if (this.messageInput.throw) {
-  throw new Error('throw=true');
-}
+    if (this.messageInput.throw) {
+      throw new Error('throw=true');
+    }
     this.messageResult.success = !this.messageInput.fail;
     res.send(this.messageResult);
-   // throw new Error('Method not implemented.');
+    // throw new Error('Method not implemented.');
   }
 }
