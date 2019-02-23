@@ -1,8 +1,8 @@
 import ClientConfig from '../Config/ClientConfig.json';
 import { IClientConfig } from './ClientConfig';
-import { ClientState } from './ClientState.js';
-import { MessageResultBase, IMessageResultBase } from '../Server/Messages/Base/MessageResultBase.js';
-import { IClassRequestBase } from './Requests/Base/ClientRequestBase.js';
+import { ClientState } from './ClientState';
+import { MessageResultBase, IMessageResultBase } from '../Server/Messages/Base/MessageResultBase';
+import { IClientRequestBase } from './Requests/Base/ClientRequestBase';
 export class Client {
   clientState: ClientState | undefined;
   constructor(public config: IClientConfig = ClientConfig as IClientConfig) {
@@ -27,8 +27,8 @@ export class Client {
     }
     this.init();
   };
-  updatetoken (result: IClassRequestBase<MessageResultBase>) {
-    if (result.authenticated) {
+  updatetoken (result: IClientRequestBase<MessageResultBase> | undefined) {
+    if (result && result.authenticated) {
       if (this.clientState && this.clientState.stateData) {
         this.clientState.stateData.token = result.messageResult.token;
         this.clientState.writeStateData();

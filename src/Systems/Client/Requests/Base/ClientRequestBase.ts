@@ -7,14 +7,18 @@ import { MessageTypes } from '../../../Server/Messages/Base/MessageTypes';
 import { Client } from '../../Client';
 import request = require('request');
 import { ErrorMessageResult } from '../../../Server/Messages/Base/MessageWrapperBase';
-export interface IClassRequestBase<TResult extends MessageResultBase> {
+export interface IClientRequestBase<TResult extends MessageResultBase> {
   authenticated: boolean;
   messageResult: TResult;
+  post(): Promise<IMessageResultBase>;
+  apiUrl: string;
+  messageInput: MessageInputBase;
+
 }
 export abstract class ClientRequestBase<
   TInput extends MessageInputBase,
   TResult extends MessageResultBase
-> implements IClassRequestBase<TResult> {
+> implements IClientRequestBase<TResult> {
   typeOf: MessageTypes;
   routeName: string;
   constructor(
