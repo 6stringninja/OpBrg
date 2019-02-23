@@ -65,7 +65,8 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
           input.serverpassword
         );
       }
-      res.send(this.messageResult);
+     // res.send(this.messageResult);
+      this.send(res, this.messageInput, this.messageResult);
     }
   }
 }

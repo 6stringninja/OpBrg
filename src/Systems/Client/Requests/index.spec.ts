@@ -80,7 +80,7 @@ describe('requests index', () => {
     const result = await test.CreateClient(input);
 
       const inputIamAlive = new IamAliveMessageInput();
-
+       // expect(result.token.id).toBe(inputIamAlive.token.id);
       const resultGetToken = await test.IamAlive(inputIamAlive);
       expect(resultGetToken.success).toBeTruthy();
       expect(resultGetToken.token.id).toBeTruthy();

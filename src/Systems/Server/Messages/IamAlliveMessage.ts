@@ -44,7 +44,7 @@ export class IamAliveMessageWrapper extends MessageWrapperBase<
       this.messageResult.sentat = new Date().getTime();
       this.messageResult.success = true;
 
-      res.send(this.messageResult);
+      this.send(res, this.messageInput, this.messageResult);
     }
   }
 }

@@ -29,9 +29,9 @@ export class Client {
   };
   updatetoken (result: IClientRequestBase<MessageResultBase> | undefined) {
     if (result && result.authenticated && result.messageResult.success) {
-      if (this.clientState && this.clientState.stateData && result.messageInput.token) {
+      if (this.clientState && this.clientState.stateData && result.messageResult.token) {
         if (!this.clientState.stateData.token
-          || (this.clientState.stateData.token.issued < result.messageInput.token.issued))
+          || (this.clientState.stateData.token.issued < result.messageResult.token.issued))
         this.clientState.stateData.token = result.messageResult.token;
         this.clientState.writeStateData();
       }

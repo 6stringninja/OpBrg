@@ -86,6 +86,11 @@ export abstract class MessageWrapperBase<
   newResult(): TResult {
     return Object.assign({}, this.messageResult) as TResult;
   }
+  send(resp: express.Response, input: any, result: any) {
+
+    console.log(input);
+    resp.send(result);
+  }
   abstract process(
     req: express.Request,
     res: express.Response,

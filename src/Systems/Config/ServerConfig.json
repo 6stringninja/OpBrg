@@ -1,5 +1,7 @@
 {
      
     "serverPassword": "1234",
-    "port": 3001
+    "port": 3001,
+    "clientLoggingEnabled":true,
+    "clientLoggingMaxRecords":500
 }
