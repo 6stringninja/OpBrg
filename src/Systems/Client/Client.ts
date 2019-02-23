@@ -28,7 +28,7 @@ export class Client {
     this.init();
   };
   updatetoken (result: IClientRequestBase<MessageResultBase> | undefined) {
-    if (result && result.authenticated) {
+    if (result && result.authenticated && result.messageResult.success) {
       if (this.clientState && this.clientState.stateData) {
         this.clientState.stateData.token = result.messageResult.token;
         this.clientState.writeStateData();

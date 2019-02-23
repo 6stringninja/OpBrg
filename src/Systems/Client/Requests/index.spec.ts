@@ -69,18 +69,24 @@ describe('requests index', () => {
     done();
   });
   it('should post I am alive', async done => {
+      const clientcount = 50;
+      for (let index = 0; index < clientcount; index++) {
+          client.clientState.stateData.client.name = `test-client${index}`;
+          client.clientState.stateData.token.name = `test-client${index}`;
     const input = new CreateClientMessageInput();
-    input.name = client.config.name;
+          input.name = `test-client${index}`;
     input.clientpassword = client.config.clientPassword;
     input.serverpassword = client.config.serverPassword;
     const result = await test.CreateClient(input);
-    for (let index = 0; index < 5; index++) {
+
       const inputIamAlive = new IamAliveMessageInput();
 
       const resultGetToken = await test.IamAlive(inputIamAlive);
       expect(resultGetToken.success).toBeTruthy();
       expect(resultGetToken.token.id).toBeTruthy();
     }
+      expect(server.serverState.tokens.length).toBeGreaterThanOrEqual(clientcount);
+      expect(server.serverState.applicationClients.clients.length).toBeGreaterThanOrEqual(clientcount);
     done();
   });
 });
