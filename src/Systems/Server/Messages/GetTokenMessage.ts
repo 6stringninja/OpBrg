@@ -60,7 +60,7 @@ export class GetTokenMessageWrapper extends MessageWrapperBase<
       } else {
         this.messageResult.token = createResult;
       }
-      this.send(res, this.messageInput, this.messageResult);
+      this.send(req, res, this.messageResult);
     }
   }
 }

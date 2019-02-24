@@ -3,4 +3,5 @@ export interface IServerConfig {
   port: number;
   clientLoggingEnabled: boolean;
   clientLoggingMaxRecords: number;
+  clientLoggingMessageWireTap: string[];
 }

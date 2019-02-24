@@ -13,7 +13,7 @@ export interface IMessageWrapper {
   typeOf: MessageTypes;
   name: string;
 }
-export class ErrorMessageResult extends MessageResultBase  {
+export class ErrorMessageResult extends MessageResultBase {
   constructor(msg = '') {
     super(MessageTypes.ErrorMessage);
     this.error = msg || this.error;
@@ -52,7 +52,6 @@ export abstract class MessageWrapperBase<
     }
   }
   validateToken() {
-
     if (!this.secured) return true;
     if (!this.messageInput || !this.messageInput.token) return false;
 
@@ -86,9 +85,15 @@ export abstract class MessageWrapperBase<
   newResult(): TResult {
     return Object.assign({}, this.messageResult) as TResult;
   }
-  send(resp: express.Response, input: any, result: any) {
+  send(req: express.Request, resp: express.Response, result: any) {
+    if (this.serverState.server) {
+      this.serverState.server.clientLogger.log(
+        req,
+        resp,
+        result.typeOf ? result : {}
+      );
+    }
 
-    console.log(input);
     resp.send(result);
   }
   abstract process(

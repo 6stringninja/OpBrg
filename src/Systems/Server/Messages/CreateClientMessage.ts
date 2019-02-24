@@ -66,7 +66,7 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
         );
       }
      // res.send(this.messageResult);
-      this.send(res, this.messageInput, this.messageResult);
+      this.send(req, res,  this.messageResult);
     }
   }
 }

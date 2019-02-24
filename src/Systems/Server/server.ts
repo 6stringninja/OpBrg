@@ -7,7 +7,7 @@ import { ServerDi } from './ServerDi';
 import { ServerState } from './ServerState';
 import { IMessageWrapper } from './Messages/Base/MessageWrapperBase';
 import { Messages } from './Messages/index';
-import { ClientLogger } from './Logger/ClientLogger.js';
+import { ClientLogger } from './Logger/ClientLogger';
 
 export class Server {
   app: express.Application = express();
@@ -19,7 +19,7 @@ export class Server {
 
   constructor(public config: IServerConfig = ServerConfig as IServerConfig) {
     new ServerDi().load(container);
-    this.serverState = ServerState.create(config.serverPassword);
+    this.serverState = ServerState.create(config.serverPassword, this);
     this.clientLogger = new ClientLogger(this);
     if (!this.serverState.loadAll())
       throw new Error('failed to load json files');
@@ -27,7 +27,7 @@ export class Server {
   private getApiUrl = (name: string) => `/${this.serverRoutePrefix}/${name}`;
 
   async initMessages() {
-    this.clientLogger.init();
+
     this.serverMessages = Messages(this.serverState);
     this.serverMessages.forEach(m => {
 

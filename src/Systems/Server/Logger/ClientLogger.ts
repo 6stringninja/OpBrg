@@ -23,11 +23,13 @@ export class ClientLogger {
     return this._masterId;
   }
 
-  init() {
+  log(req: express.Request, res: express.Response, msg: MessageResultBase) {
     if (this.server.config.clientLoggingEnabled) {
-      this.server.app.use((req, res: express.Response, next) => {
+
         if (req.body && (req.body as MessageInputBase).typeOf) {
           const b = req.body as MessageInputBase;
+          console.log(b.typeOf);
+          if (!this.server.config.clientLoggingMessageWireTap.some(s => s === b.typeOf.toString() || s === 'all')) return;
           if (!b.nonce) b.nonce = ApplicationTokenHelper.generateIdentifier();
           const tn = b.token ? b.token.name : 'noname';
           const logMessage = new ClientLoggerMessage();
@@ -36,7 +38,10 @@ export class ClientLogger {
           logMessage.noonce = b.nonce;
           logMessage.name = tn;
           logMessage.typeOf = b.typeOf.toString();
-          console.log(logMessage);
+          if (msg) {
+            logMessage.messageResult = msg;
+          }
+         console.log(logMessage);
           this.loggerMessages.push(logMessage);
           if (
             this.loggerMessages.length >
@@ -45,8 +50,7 @@ export class ClientLogger {
             this.loggerMessages.shift();
         }
 
-        next();
-      });
+
     }
   }
 }

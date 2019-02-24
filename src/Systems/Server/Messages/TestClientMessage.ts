@@ -42,7 +42,7 @@ export class TestClientMessageWrapper extends MessageWrapperBase<
 
     this.messageResult.success = !this.messageInput.fail;
     res.send(this.messageResult);
-    this.send(res, this.messageInput, this.messageResult);
+    this.send(req, res, this.messageResult);
     // throw new Error('Method not implemented.');
   }
 }

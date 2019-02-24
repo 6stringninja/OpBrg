@@ -9,6 +9,8 @@ import {
   ApplicationTokensSerializerJsonFileService,
   ApplicationClientsSerializerJsonFileService
 } from '../Services/SerializeService';
+import { Server } from './Server';
+
 
 container.registerSingleton(
   'ISerializerService<ApplicationClient[]>',
@@ -23,6 +25,7 @@ export class ServerState {
   tokens: ApplicationToken[] = [];
   applicationClients: ApplicationClients;
   password = ApplicationTokenHelper.generateIdentifier();
+  server?: Server;
   constructor(
     @inject('ISerializerService<ApplicationToken[]>')
     public serializeTokensService: ISerializerService<ApplicationToken[]>
@@ -33,10 +36,10 @@ export class ServerState {
     }
     this.applicationClients = ApplicationClients.create(this);
   }
-  static create(password = ApplicationTokenHelper.generateIdentifier()) {
+  static create(password = ApplicationTokenHelper.generateIdentifier(), server: Server) {
     const obj = container.resolve(ServerState);
     obj.password = password;
-
+    obj.server = server;
     return obj;
   }
 
