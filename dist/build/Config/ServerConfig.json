@@ -1,4 +1,7 @@
 {
     "serverPassword": "1234",
-    "port": 3001
+    "port": 3001,
+    "clientLoggingEnabled": false,
+    "clientLoggingMaxRecords": 500,
+    "clientLoggingMessageWireTap": ["create-client", "all"]
 }

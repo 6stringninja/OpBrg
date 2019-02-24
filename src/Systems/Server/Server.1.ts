@@ -9,6 +9,7 @@ import { IMessageWrapper } from './Messages/Base/MessageWrapperBase';
 import { Messages } from './Messages/index';
 import { ClientLogger } from './Logger/ClientLogger';
 
+
 export class Server {
   app: express.Application = express();
   serverState: ServerState | undefined;

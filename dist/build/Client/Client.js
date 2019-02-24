@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ClientConfig_json_1 = __importDefault(require("../Config/ClientConfig.json"));
-const ClientState_js_1 = require("./ClientState.js");
+const ClientState_1 = require("./ClientState");
 class Client {
     constructor(config = ClientConfig_json_1.default) {
         this.config = config;
@@ -17,7 +17,7 @@ class Client {
         this.init();
     }
     init() {
-        this.clientState = ClientState_js_1.ClientState.create();
+        this.clientState = ClientState_1.ClientState.create();
         this.copyConfigToApplicationClient();
     }
     copyConfigToApplicationClient() {
@@ -31,9 +31,11 @@ class Client {
         }
     }
     updatetoken(result) {
-        if (result.authenticated) {
-            if (this.clientState && this.clientState.stateData) {
-                this.clientState.stateData.token = result.messageResult.token;
+        if (result && result.authenticated && result.messageResult.success) {
+            if (this.clientState && this.clientState.stateData && result.messageResult.token) {
+                if (!this.clientState.stateData.token
+                    || (this.clientState.stateData.token.issued < result.messageResult.token.issued))
+                    this.clientState.stateData.token = result.messageResult.token;
                 this.clientState.writeStateData();
             }
         }
