@@ -9,6 +9,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tsyringe_1 = require("tsyringe");
 const SerializeService_1 = require("./SerializeService");
 let ApplicationClientSerializerTestService = class ApplicationClientSerializerTestService {
+    write(b) {
+        throw new Error('Method not implemented.');
+    }
+    read() {
+        throw new Error('Method not implemented.');
+    }
+    exists() {
+        throw new Error('Method not implemented.');
+    }
     dataExists() {
         return true;
     }

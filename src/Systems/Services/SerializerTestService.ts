@@ -5,6 +5,18 @@ import { ApplicationToken } from '../Application/ApplicationToken';
 @singleton()
 export class ApplicationClientSerializerTestService
   implements ISerializerService<ApplicationClient[]> {
+  write(b: ApplicationClient[]): Promise<{}> {
+    throw new Error('Method not implemented.');
+  }
+  read(): Promise<ApplicationClient[]> {
+    throw new Error('Method not implemented.');
+  }
+  exists(): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+ 
+ 
+  
   dataExists(): boolean {
     return true;
   }

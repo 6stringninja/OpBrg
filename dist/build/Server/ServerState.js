@@ -63,9 +63,10 @@ let ServerState = ServerState_1 = class ServerState {
         }
         this.applicationClients = ApplicationClients_1.ApplicationClients.create(this);
     }
-    static create(password = ApplicationTokenHelper_1.ApplicationTokenHelper.generateIdentifier()) {
+    static create(password = ApplicationTokenHelper_1.ApplicationTokenHelper.generateIdentifier(), server) {
         const obj = tsyringe_1.container.resolve(ServerState_1);
         obj.password = password;
+        obj.server = server;
         return obj;
     }
     getToken(name) {

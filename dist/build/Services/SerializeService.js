@@ -61,10 +61,39 @@ class SerializerJsonFileService {
     dataExists() {
         return fs_1.default.existsSync(this.filePath());
     }
+    write(text) {
+        return new Promise((resolve, reject) => {
+            fs_1.default.writeFile(this.filePath(), JSON.stringify(text), err => {
+                if (err)
+                    reject(err);
+                else
+                    resolve();
+            });
+        });
+    }
+    read() {
+        return new Promise((resolve, reject) => {
+            fs_1.default.readFile(this.filePath(), 'utf8', (err, data) => {
+                if (err)
+                    reject(err);
+                else
+                    resolve(JSON.parse(data));
+            });
+        });
+    }
+    exists() {
+        return new Promise((resolve, reject) => {
+            fs_1.default.exists(this.filePath(), (data) => {
+                resolve(data);
+            });
+        });
+    }
 }
 exports.SerializerJsonFileService = SerializerJsonFileService;
 let ApplicationClientsSerializerJsonFileService = class ApplicationClientsSerializerJsonFileService extends SerializerJsonFileService {
-    constructor() { super('applicationClients.json'); }
+    constructor() {
+        super('applicationClients.json');
+    }
 };
 ApplicationClientsSerializerJsonFileService = __decorate([
     tsyringe_1.singleton(),
@@ -72,7 +101,9 @@ ApplicationClientsSerializerJsonFileService = __decorate([
 ], ApplicationClientsSerializerJsonFileService);
 exports.ApplicationClientsSerializerJsonFileService = ApplicationClientsSerializerJsonFileService;
 let ApplicationTokensSerializerJsonFileService = class ApplicationTokensSerializerJsonFileService extends SerializerJsonFileService {
-    constructor() { super('applicationTokens.json'); }
+    constructor() {
+        super('applicationTokens.json');
+    }
 };
 ApplicationTokensSerializerJsonFileService = __decorate([
     tsyringe_1.singleton(),
@@ -80,7 +111,9 @@ ApplicationTokensSerializerJsonFileService = __decorate([
 ], ApplicationTokensSerializerJsonFileService);
 exports.ApplicationTokensSerializerJsonFileService = ApplicationTokensSerializerJsonFileService;
 let ClientStateDataSerializerJsonFileService = class ClientStateDataSerializerJsonFileService extends SerializerJsonFileService {
-    constructor() { super('clientStateData.json'); }
+    constructor() {
+        super('clientStateData.json');
+    }
 };
 ClientStateDataSerializerJsonFileService = __decorate([
     tsyringe_1.singleton(),

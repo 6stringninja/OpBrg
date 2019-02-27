@@ -28,6 +28,7 @@ class TestClientMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase {
         }
         this.messageResult.success = !this.messageInput.fail;
         res.send(this.messageResult);
+        this.send(req, res, this.messageResult);
     }
 }
 exports.TestClientMessageWrapper = TestClientMessageWrapper;

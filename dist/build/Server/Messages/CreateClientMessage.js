@@ -40,7 +40,7 @@ class CreateClientMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase
             else {
                 this.messageResult.token = serverState.authenticateNewToken(input.name, input.serverpassword);
             }
-            res.send(this.messageResult);
+            this.send(req, res, this.messageResult);
         }
     }
 }

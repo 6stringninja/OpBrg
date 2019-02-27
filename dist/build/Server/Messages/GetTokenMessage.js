@@ -38,7 +38,7 @@ class GetTokenMessageWrapper extends MessageWrapperBase_1.MessageWrapperBase {
             else {
                 this.messageResult.token = createResult;
             }
-            res.send(this.messageResult);
+            this.send(req, res, this.messageResult);
         }
     }
 }

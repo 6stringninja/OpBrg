@@ -68,5 +68,11 @@ class MessageWrapperBase {
     newResult() {
         return Object.assign({}, this.messageResult);
     }
+    send(req, resp, result) {
+        if (this.serverState.server) {
+            this.serverState.server.clientLogger.log(req, resp, result.typeOf ? result : {});
+        }
+        resp.send(result);
+    }
 }
 exports.MessageWrapperBase = MessageWrapperBase;
