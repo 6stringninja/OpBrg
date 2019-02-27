@@ -50,12 +50,12 @@ class MessageWrapperBase {
             res.send(new ErrorMessageResult(error));
         }
     }
-    validateToken() {
+    async validateToken() {
         if (!this.secured)
             return true;
         if (!this.messageInput || !this.messageInput.token)
             return false;
-        const tokenResult = this.serverState.validateToken(this.messageInput.token);
+        const tokenResult = await this.serverState.validateToken(this.messageInput.token);
         this.messageResult.success = tokenResult.success;
         this.messageResult.token = tokenResult.token;
         if (!this.messageResult.success)

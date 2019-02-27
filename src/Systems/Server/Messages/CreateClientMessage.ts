@@ -8,6 +8,7 @@ import {
 import express = require('express');
 import { ApplicationClientCreateResult } from '../../Application/ApplicationClientCreateResult';
 import { MessageTypes } from './Base/MessageTypes';
+import { isUndefined } from 'util';
 export class CreateClientMessageInput extends MessageInputBase {
   constructor(
     public name = '',
@@ -37,11 +38,11 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
       false
     );
   }
-  process(
+  async process(
     req: express.Request,
     res: express.Response,
     serverState: ServerState
-  ): void {
+  ): Promise<void> {
     const input = this.messageInput;
 
     if (
@@ -49,7 +50,8 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
     ) {
       res.send(new ErrorMessageResult('invalid input'));
     } else {
-      const createResult = serverState.applicationClients.createClient(
+      if (isUndefined(serverState) || isUndefined(serverState.applicationClients)) return;
+      const createResult = await serverState.applicationClients.createClient(
         input.name,
         input.serverpassword,
         input.clientpassword
@@ -60,7 +62,7 @@ export class CreateClientMessageWrapper extends MessageWrapperBase<
       if (!this.messageResult.success) {
         this.messageResult.error = createResult.toString();
       } else {
-        this.messageResult.token = serverState.authenticateNewToken(
+        this.messageResult.token = await serverState.authenticateNewToken(
           input.name,
           input.serverpassword
         );

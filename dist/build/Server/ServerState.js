@@ -29,14 +29,16 @@ let ServerState = ServerState_1 = class ServerState {
         this.serializeTokensService = serializeTokensService;
         this.tokens = [];
         this.password = ApplicationTokenHelper_1.ApplicationTokenHelper.generateIdentifier();
-        this.authenticateNewClientToken = (name, password) => {
+        this.authenticateNewClientToken = async (name, password) => {
+            if (util_1.isUndefined(this.applicationClients))
+                return;
             const token = name && this.applicationClients.isAuthorizedClient(name, password)
-                ? this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.createToken(name))
+                ? await this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.createToken(name))
                 : undefined;
             return token;
         };
-        this.authenticateNewToken = (name, password) => name && this.isValidServerPassword(password)
-            ? this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.createToken(name))
+        this.authenticateNewToken = async (name, password) => name && await this.isValidServerPassword(password)
+            ? await this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.createToken(name))
             : undefined;
         this.isValidToken = (token) => {
             let tokenRequired = token &&
@@ -52,16 +54,17 @@ let ServerState = ServerState_1 = class ServerState {
             return tokenRequired;
         };
         this.filterOutExpiredTokens = () => this.tokens.filter(f => f.issued < new Date().getTime());
-        this.updateSoonToExpireToken = (token) => ApplicationTokenHelper_1.ApplicationTokenHelper.isAboutToExpire(token)
-            ? this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.setTokenIssuedAndId(token))
+        this.updateSoonToExpireToken = async (token) => ApplicationTokenHelper_1.ApplicationTokenHelper.isAboutToExpire(token)
+            ? await this.addOrUpdateToken(ApplicationTokenHelper_1.ApplicationTokenHelper.setTokenIssuedAndId(token))
             : token;
         this.isEmptyToken = (token) => !(token && token.name);
         this.findTokenIndexByName = (token) => this.tokens.findIndex(f => f.name === token.name);
-        const result = this.serializeTokensService.deserialize();
-        if (result.success && result.result) {
-            this.tokens = result.result;
-        }
-        this.applicationClients = ApplicationClients_1.ApplicationClients.create(this);
+        this.serializeTokensService.deserialize().then((result) => {
+            if (result.success && result.result) {
+                this.tokens = result.result;
+            }
+            this.applicationClients = ApplicationClients_1.ApplicationClients.create(this);
+        });
     }
     static create(password = ApplicationTokenHelper_1.ApplicationTokenHelper.generateIdentifier(), server) {
         const obj = tsyringe_1.container.resolve(ServerState_1);
@@ -72,7 +75,7 @@ let ServerState = ServerState_1 = class ServerState {
     getToken(name) {
         return this.tokens.find(f => f.name == name);
     }
-    addOrUpdateToken(token) {
+    async addOrUpdateToken(token) {
         if (this.isEmptyToken(token))
             return token;
         if (util_1.isUndefined(token))
@@ -84,11 +87,13 @@ let ServerState = ServerState_1 = class ServerState {
         else {
             this.tokens.push(token);
         }
+        if (util_1.isUndefined(this.applicationClients))
+            return token;
         const index = this.applicationClients.clients.findIndex(f => f.name === token.name);
         if (index > -1) {
             this.applicationClients.clients[index].lastAccess = new Date().getTime();
         }
-        this.writeAll();
+        await this.writeAll();
         return !token.clone ? undefined : token.clone();
     }
     isValidServerPassword(password) {
@@ -97,64 +102,72 @@ let ServerState = ServerState_1 = class ServerState {
     isValidClientPassword(name, password) {
         return !!(password && this.password && this.password === password);
     }
-    validateToken(token) {
+    async validateToken(token) {
         const isValidatedToken = !!this.isValidToken(token);
-        return new ServerTokenValidateResult_1.ServerTokenValidateResult(isValidatedToken ? this.updateSoonToExpireToken(token) : token, isValidatedToken);
+        return new ServerTokenValidateResult_1.ServerTokenValidateResult(isValidatedToken ? await this.updateSoonToExpireToken(token) : token, isValidatedToken);
     }
     removeExpiredTokens() {
         const countPriorToFilter = this.tokens.length;
         this.tokens = this.filterOutExpiredTokens();
         return countPriorToFilter !== this.tokens.length;
     }
-    loadTokens() {
-        return this.serializeTokensService.dataExists()
-            ? this.readTokens()
-            : this.writeTokens();
+    async loadTokens() {
+        return await this.serializeTokensService.dataExists()
+            ? await this.readTokens()
+            : await this.writeTokens();
     }
-    writeTokens() {
-        return this.serializeTokensService.serialize(this.tokens).success;
+    async writeTokens() {
+        return (await this.serializeTokensService.serialize(this.tokens)).success;
     }
-    readTokens() {
-        const dataResult = this.serializeTokensService.deserialize();
+    async readTokens() {
+        const dataResult = await this.serializeTokensService.deserialize();
         if (dataResult.success && dataResult.result) {
             this.tokens = dataResult.result;
             return dataResult.success;
         }
         return false;
     }
-    loadClients() {
-        return this.applicationClients.serializeService.dataExists()
-            ? this.readClients()
-            : this.writeClients();
+    async loadClients() {
+        if (util_1.isUndefined(this.applicationClients))
+            return;
+        return await this.applicationClients.serializeService.dataExists()
+            ? await this.readClients()
+            : await this.writeClients();
     }
-    writeClients() {
-        return this.applicationClients.serializeService.serialize(this.applicationClients.clients).success;
+    async writeClients() {
+        if (util_1.isUndefined(this.applicationClients))
+            return;
+        return (await this.applicationClients.serializeService.serialize(this.applicationClients.clients)).success;
     }
-    readClients() {
-        const dataResult = this.applicationClients.serializeService.deserialize();
+    async readClients() {
+        if (util_1.isUndefined(this.applicationClients))
+            return;
+        const dataResult = await this.applicationClients.serializeService.deserialize();
         if (dataResult.success && dataResult.result) {
             this.applicationClients.clients = dataResult.result;
             return dataResult.success;
         }
         return false;
     }
-    resetTokens() {
+    async resetTokens() {
         this.tokens = [];
-        this.writeTokens();
+        await this.writeTokens();
     }
-    resetClients() {
+    async resetClients() {
+        if (util_1.isUndefined(this.applicationClients))
+            return;
         this.applicationClients.clients = [];
-        this.writeClients();
+        await this.writeClients();
     }
-    resetAll() {
-        this.resetClients();
-        this.resetTokens();
+    async resetAll() {
+        await this.resetClients();
+        await this.resetTokens();
     }
-    loadAll() {
-        return !!(this.loadClients() && this.loadTokens());
+    async loadAll() {
+        return !!(await this.loadClients() && await this.loadTokens());
     }
-    writeAll() {
-        return !!(this.writeClients() && this.writeTokens());
+    async writeAll() {
+        return !!(await this.writeClients() && await this.writeTokens());
     }
 };
 ServerState = ServerState_1 = __decorate([

@@ -24,31 +24,35 @@ export class ApplicationClients {
     appClients.serverTokens = serverTokens;
     return appClients;
   }
-  load = (): boolean => {
-    const result = this.serializeService.deserialize();
+  load = async (): Promise<boolean> => {
+    const result = await this.serializeService.deserialize();
     if (result.success && !!result.result) {
       this.clients = result.result;
     }
     return result.success;
   };
-  save = (): boolean => this.serializeService.serialize(this.clients).success;
+  save = async (): Promise<boolean> =>
+    (await this.serializeService.serialize(this.clients)).success;
 
-  createClient = (
+  createClient = async (
     name: string,
     serverpassword: string,
     clientpassword: string
-  ): ApplicationClientCreateResult =>
-    this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)
+  ): Promise<ApplicationClientCreateResult> =>
+    await this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)
       ? this.validatedApplicationClientCreateResult(name, clientpassword)
       : ApplicationClientCreateResult.Error;
-  createToken = (
+  createToken = async (
     name: string,
     serverpassword: string,
     clientpassword: string
-  ): ApplicationToken | undefined =>
-    this.isValidClientCredentialIsValid(name, serverpassword, clientpassword) &&
-    !!this.serverTokens
-      ? this.serverTokens.authenticateNewClientToken(name, clientpassword)
+  ): Promise<ApplicationToken | undefined> =>
+    (await this.isValidClientCredentialIsValid(
+      name,
+      serverpassword,
+      clientpassword
+    )) && !!this.serverTokens
+      ? await this.serverTokens.authenticateNewClientToken(name, clientpassword)
       : undefined;
 
   private isValidClientCredentialIsValid = (
@@ -77,15 +81,15 @@ export class ApplicationClients {
       ? ApplicationClientCreateResult.NameUnavailable
       : this.addClientApplicationClientCreateResult(name, clientpassword);
 
-  private addClientApplicationClientCreateResult = (
+  private addClientApplicationClientCreateResult = async (
     name: string,
     clientpassword: string
-  ): ApplicationClientCreateResult => {
+  ): Promise<ApplicationClientCreateResult> => {
     const result = !!this.addClient(name, clientpassword)
       ? ApplicationClientCreateResult.Success
       : ApplicationClientCreateResult.Error;
     if (result === ApplicationClientCreateResult.Success) {
-      this.save();
+     await this.save();
     }
     return result;
   };

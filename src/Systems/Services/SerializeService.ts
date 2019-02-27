@@ -10,9 +10,9 @@ export class SerializerResult<T> {
   result?: T | undefined;
 }
 export interface ISerializerService<T> {
-  serialize(itemToSerialize: T): SerializerResult<string>;
-  deserialize(): SerializerResult<T>;
-  dataExists(): boolean;
+    serialize(itemToSerialize: T): Promise<SerializerResult<string>>;
+    deserialize(): Promise<SerializerResult<T>>;
+  dataExists(): Promise<boolean>;
   write( b: T): Promise<{}>;
   read(): Promise<T>;
   exists(): Promise<boolean>;
@@ -22,12 +22,12 @@ export abstract class SerializerJsonFileService<T>
   implements ISerializerService<T> {
   constructor(public filename = '') {}
 
-  serialize(itemToSerialize: T): SerializerResult<string> {
+  async serialize(itemToSerialize: T): Promise<SerializerResult<string>> {
     const result = new SerializerResult<string>();
     result.result = JSON.stringify(itemToSerialize);
 
     try {
-      fs.writeFileSync(this.filePath(), result.result, 'utf8');
+      await this.write(itemToSerialize);
       result.success = true;
     } catch (error) {
       result.success = false;
@@ -46,19 +46,19 @@ export abstract class SerializerJsonFileService<T>
 
     return `${dirname}\\${this.filename}`;
   };
-  deserialize(): SerializerResult<T> {
+  async deserialize(): Promise<SerializerResult<T>> {
     const result = new SerializerResult<T>();
 
     try {
-      result.result = JSON.parse(fs.readFileSync(this.filePath(), 'utf8')) as T;
+      result.result = await this.read();
       result.success = true;
     } catch (error) {
       result.success = false;
     }
     return result;
   }
-  dataExists(): boolean {
-    return fs.existsSync(this.filePath());
+  async dataExists(): Promise<boolean> {
+    return await this.exists();
   }
   // Writes given text to a file asynchronously.
   // Returns a Promise.

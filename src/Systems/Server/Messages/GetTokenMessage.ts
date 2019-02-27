@@ -7,6 +7,7 @@ import {
 } from './Base/MessageWrapperBase';
 import express = require('express');
 import { MessageTypes } from './Base/MessageTypes';
+import { isUndefined } from 'util';
 
 export class GetTokenMessageInput extends MessageInputBase {
   constructor(
@@ -37,18 +38,19 @@ export class GetTokenMessageWrapper extends MessageWrapperBase<
       false
     );
   }
-  process(
+  async process(
     req: express.Request,
     res: express.Response,
     serverState: ServerState
-  ): void {
+  ): Promise<void> {
     const input = this.messageInput;
+    if (isUndefined(serverState) || isUndefined(serverState.applicationClients)) return;
     if (
       !(input && input.name && input.clientpassword && input.serverpassword)
     ) {
       res.send(new ErrorMessageResult('invalid input'));
     } else {
-      const createResult = serverState.applicationClients.createToken(
+      const createResult =await serverState.applicationClients.createToken(
         input.name,
         input.serverpassword,
         input.clientpassword

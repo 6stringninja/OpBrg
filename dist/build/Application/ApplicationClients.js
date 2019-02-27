@@ -23,20 +23,19 @@ let ApplicationClients = ApplicationClients_1 = class ApplicationClients {
     constructor(serializeService) {
         this.serializeService = serializeService;
         this.clients = [];
-        this.load = () => {
-            const result = this.serializeService.deserialize();
+        this.load = async () => {
+            const result = await this.serializeService.deserialize();
             if (result.success && !!result.result) {
                 this.clients = result.result;
             }
             return result.success;
         };
-        this.save = () => this.serializeService.serialize(this.clients).success;
-        this.createClient = (name, serverpassword, clientpassword) => this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)
+        this.save = async () => (await this.serializeService.serialize(this.clients)).success;
+        this.createClient = async (name, serverpassword, clientpassword) => await this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)
             ? this.validatedApplicationClientCreateResult(name, clientpassword)
             : ApplicationClientCreateResult_1.ApplicationClientCreateResult.Error;
-        this.createToken = (name, serverpassword, clientpassword) => this.isValidClientCredentialIsValid(name, serverpassword, clientpassword) &&
-            !!this.serverTokens
-            ? this.serverTokens.authenticateNewClientToken(name, clientpassword)
+        this.createToken = async (name, serverpassword, clientpassword) => (await this.isValidClientCredentialIsValid(name, serverpassword, clientpassword)) && !!this.serverTokens
+            ? await this.serverTokens.authenticateNewClientToken(name, clientpassword)
             : undefined;
         this.isValidClientCredentialIsValid = (name, serverpassword, clientpassword) => !!(this.serverTokens &&
             this.serverTokens.isValidServerPassword(serverpassword) &&
@@ -47,12 +46,12 @@ let ApplicationClients = ApplicationClients_1 = class ApplicationClients {
         this.validatedApplicationClientCreateResult = (name, clientpassword) => this.doesClientNameExist(name)
             ? ApplicationClientCreateResult_1.ApplicationClientCreateResult.NameUnavailable
             : this.addClientApplicationClientCreateResult(name, clientpassword);
-        this.addClientApplicationClientCreateResult = (name, clientpassword) => {
+        this.addClientApplicationClientCreateResult = async (name, clientpassword) => {
             const result = !!this.addClient(name, clientpassword)
                 ? ApplicationClientCreateResult_1.ApplicationClientCreateResult.Success
                 : ApplicationClientCreateResult_1.ApplicationClientCreateResult.Error;
             if (result === ApplicationClientCreateResult_1.ApplicationClientCreateResult.Success) {
-                this.save();
+                await this.save();
             }
             return result;
         };

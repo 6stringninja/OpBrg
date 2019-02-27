@@ -23,18 +23,21 @@ container.register('ISerializerService<ApplicationToken[]>', {
 @autoInjectable()
 export class ServerState {
   tokens: ApplicationToken[] = [];
-  applicationClients: ApplicationClients;
+  applicationClients?: ApplicationClients;
   password = ApplicationTokenHelper.generateIdentifier();
   server?: Server;
   constructor(
     @inject('ISerializerService<ApplicationToken[]>')
     public serializeTokensService: ISerializerService<ApplicationToken[]>
   ) {
-    const result = this.serializeTokensService.deserialize();
-    if (result.success && result.result) {
-      this.tokens = result.result;
-    }
+     this.serializeTokensService.deserialize().then((result)=>{
+      if(result.success && result.result) {
+        this.tokens = result.result;
+  }
     this.applicationClients = ApplicationClients.create(this);
+
+    });
+    
   }
   static create(password = ApplicationTokenHelper.generateIdentifier(), server: Server) {
     const obj = container.resolve(ServerState);
@@ -47,9 +50,10 @@ export class ServerState {
     return this.tokens.find(f => f.name == name);
   }
 
-  addOrUpdateToken(
+  async addOrUpdateToken(
     token: ApplicationToken | undefined
-  ): ApplicationToken | undefined {
+  ): Promise<ApplicationToken | undefined> {
+
     if (this.isEmptyToken(token)) return token;
     if (isUndefined(token)) return token;
     const findTokenIndex = this.findTokenIndexByName(token);
@@ -58,6 +62,7 @@ export class ServerState {
     } else {
       this.tokens.push(token);
     }
+     if (isUndefined(this.applicationClients) ) return token;
     const index = this.applicationClients.clients.findIndex(
       f => f.name === token.name
     );
@@ -65,7 +70,7 @@ export class ServerState {
       this.applicationClients.clients[index].lastAccess = new Date().getTime();
     }
 
-    this.writeAll();
+   await  this.writeAll();
 
     return !token.clone ? undefined : token.clone();
   }
@@ -76,23 +81,24 @@ export class ServerState {
   isValidClientPassword(name: string, password: string): boolean {
     return !!(password && this.password && this.password === password);
   }
-  authenticateNewClientToken = (
+  authenticateNewClientToken = async (
     name: string,
     password: string
-  ): ApplicationToken | undefined => {
+  ): Promise<ApplicationToken | undefined> => {
+    if (isUndefined(this.applicationClients)) return;
     const token =
       name && this.applicationClients.isAuthorizedClient(name, password)
-        ? this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
+        ? await this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
         : undefined;
 
     return token;
   };
-  authenticateNewToken = (
+  authenticateNewToken = async (
     name: string,
     password: string
-  ): ApplicationToken | undefined =>
-    name && this.isValidServerPassword(password)
-      ? this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
+  ): Promise<ApplicationToken | undefined> =>
+    name && await this.isValidServerPassword(password)
+      ? await this.addOrUpdateToken(ApplicationTokenHelper.createToken(name))
       : undefined;
 
   isValidToken = (token: ApplicationToken) => {
@@ -114,11 +120,11 @@ export class ServerState {
     return tokenRequired;
   };
 
-  validateToken(token: ApplicationToken): ServerTokenValidateResult {
+  async validateToken(token: ApplicationToken): Promise<ServerTokenValidateResult> {
     const isValidatedToken = !!this.isValidToken(token);
 
     return new ServerTokenValidateResult(
-      isValidatedToken ? this.updateSoonToExpireToken(token) : token,
+      isValidatedToken ? await this.updateSoonToExpireToken(token) : token,
       isValidatedToken
     );
   }
@@ -127,16 +133,16 @@ export class ServerState {
     this.tokens = this.filterOutExpiredTokens();
     return countPriorToFilter !== this.tokens.length;
   }
-  loadTokens() {
-    return this.serializeTokensService.dataExists()
-      ? this.readTokens()
-      : this.writeTokens();
+  async loadTokens() {
+    return await this.serializeTokensService.dataExists()
+      ? await this.readTokens()
+      : await this.writeTokens();
   }
-  writeTokens() {
-    return this.serializeTokensService.serialize(this.tokens).success;
+  async writeTokens() {
+    return (await this.serializeTokensService.serialize(this.tokens)).success;
   }
-  readTokens() {
-    const dataResult = this.serializeTokensService.deserialize();
+  async readTokens() {
+    const dataResult = await this.serializeTokensService.deserialize();
 
     if (dataResult.success && dataResult.result) {
       this.tokens = dataResult.result;
@@ -144,18 +150,21 @@ export class ServerState {
     }
     return false;
   }
-  loadClients() {
-    return this.applicationClients.serializeService.dataExists()
-      ? this.readClients()
-      : this.writeClients();
+  async loadClients() {
+    if (isUndefined(this.applicationClients)) return;
+    return await this.applicationClients.serializeService.dataExists()
+      ? await this.readClients()
+      : await  this.writeClients();
   }
-  writeClients() {
-    return this.applicationClients.serializeService.serialize(
+  async writeClients() {
+    if (isUndefined(this.applicationClients)) return;
+    return( await this.applicationClients.serializeService.serialize(
       this.applicationClients.clients
-    ).success;
+    )).success;
   }
-  readClients() {
-    const dataResult = this.applicationClients.serializeService.deserialize();
+  async readClients() {
+    if (isUndefined(this.applicationClients)) return;
+    const dataResult = await this.applicationClients.serializeService.deserialize();
 
     if (dataResult.success && dataResult.result) {
       this.applicationClients.clients = dataResult.result;
@@ -163,32 +172,33 @@ export class ServerState {
     }
     return false;
   }
-  resetTokens() {
+  async resetTokens() {
     this.tokens = [];
-    this.writeTokens();
+   await this.writeTokens();
   }
-  resetClients() {
+  async resetClients() {
+    if (isUndefined(this.applicationClients) ) return;
     this.applicationClients.clients = [];
-    this.writeClients();
+    await this.writeClients();
   }
-  resetAll() {
-    this.resetClients();
-    this.resetTokens();
+  async resetAll() {
+    await  this.resetClients();
+    await this.resetTokens();
   }
-  loadAll() {
-    return !!(this.loadClients() && this.loadTokens());
+  async loadAll() {
+    return !!(await this.loadClients() && await this.loadTokens());
   }
-  writeAll() {
-    return !!(this.writeClients() && this.writeTokens());
+  async writeAll() {
+    return !!(await this.writeClients() && await this.writeTokens());
   }
   private filterOutExpiredTokens = () =>
     this.tokens.filter(f => f.issued < new Date().getTime());
 
-  private updateSoonToExpireToken = (
+  private updateSoonToExpireToken = async (
     token: ApplicationToken
-  ): ApplicationToken | undefined =>
+  ): Promise<ApplicationToken | undefined> =>
     ApplicationTokenHelper.isAboutToExpire(token)
-      ? this.addOrUpdateToken(ApplicationTokenHelper.setTokenIssuedAndId(token))
+      ? await this.addOrUpdateToken(ApplicationTokenHelper.setTokenIssuedAndId(token))
       : token;
 
   private isEmptyToken = (token: ApplicationToken | undefined) =>

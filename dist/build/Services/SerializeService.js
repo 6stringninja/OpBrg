@@ -35,11 +35,11 @@ class SerializerJsonFileService {
             return `${dirname}\\${this.filename}`;
         };
     }
-    serialize(itemToSerialize) {
+    async serialize(itemToSerialize) {
         const result = new SerializerResult();
         result.result = JSON.stringify(itemToSerialize);
         try {
-            fs_1.default.writeFileSync(this.filePath(), result.result, 'utf8');
+            await this.write(itemToSerialize);
             result.success = true;
         }
         catch (error) {
@@ -47,10 +47,10 @@ class SerializerJsonFileService {
         }
         return result;
     }
-    deserialize() {
+    async deserialize() {
         const result = new SerializerResult();
         try {
-            result.result = JSON.parse(fs_1.default.readFileSync(this.filePath(), 'utf8'));
+            result.result = await this.read();
             result.success = true;
         }
         catch (error) {
@@ -58,8 +58,8 @@ class SerializerJsonFileService {
         }
         return result;
     }
-    dataExists() {
-        return fs_1.default.existsSync(this.filePath());
+    async dataExists() {
+        return await this.exists();
     }
     write(text) {
         return new Promise((resolve, reject) => {

@@ -5,6 +5,17 @@ import { ApplicationToken } from '../Application/ApplicationToken';
 @singleton()
 export class ApplicationClientSerializerTestService
   implements ISerializerService<ApplicationClient[]> {
+  dataExists(): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+  deserialize(): Promise<SerializerResult<ApplicationClient[]>> {
+    throw new Error('Method not implemented.');
+  }
+  serialize(itemToSerialize: ApplicationClient[]): Promise<SerializerResult<string>> {
+   
+    throw new Error('Method not implemented.');
+    
+  }
   write(b: ApplicationClient[]): Promise<{}> {
     throw new Error('Method not implemented.');
   }
@@ -14,20 +25,19 @@ export class ApplicationClientSerializerTestService
   exists(): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
- 
- 
-  
-  dataExists(): boolean {
-    return true;
-  }
-  fakeitems: ApplicationClient[] | undefined;
+ /*
   serialize(itemToSerialize: ApplicationClient[]): SerializerResult<string> {
     this.fakeitems = itemToSerialize;
     const result = new SerializerResult<string>();
     result.result = JSON.stringify(itemToSerialize);
     result.success = true;
     return result;
-  }
+  }*/
+  
+ 
+  fakeitems: ApplicationClient[] | undefined;
+}
+/*
   deserialize(): SerializerResult<ApplicationClient[]> {
     if (!this.fakeitems) this.fakeitems = [];
     const result = new SerializerResult<ApplicationClient[]>();
@@ -35,8 +45,7 @@ export class ApplicationClientSerializerTestService
     result.success = true;
     return result;
   }
-}
-/*
+
 @singleton()
 export class ApplicationTokensSerializerTestService
   implements ISerializerService<ApplicationToken[]> {

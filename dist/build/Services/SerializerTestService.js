@@ -7,8 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsyringe_1 = require("tsyringe");
-const SerializeService_1 = require("./SerializeService");
 let ApplicationClientSerializerTestService = class ApplicationClientSerializerTestService {
+    dataExists() {
+        throw new Error('Method not implemented.');
+    }
+    deserialize() {
+        throw new Error('Method not implemented.');
+    }
+    serialize(itemToSerialize) {
+        throw new Error('Method not implemented.');
+    }
     write(b) {
         throw new Error('Method not implemented.');
     }
@@ -17,24 +25,6 @@ let ApplicationClientSerializerTestService = class ApplicationClientSerializerTe
     }
     exists() {
         throw new Error('Method not implemented.');
-    }
-    dataExists() {
-        return true;
-    }
-    serialize(itemToSerialize) {
-        this.fakeitems = itemToSerialize;
-        const result = new SerializeService_1.SerializerResult();
-        result.result = JSON.stringify(itemToSerialize);
-        result.success = true;
-        return result;
-    }
-    deserialize() {
-        if (!this.fakeitems)
-            this.fakeitems = [];
-        const result = new SerializeService_1.SerializerResult();
-        result.result = this.fakeitems;
-        result.success = true;
-        return result;
     }
 };
 ApplicationClientSerializerTestService = __decorate([
